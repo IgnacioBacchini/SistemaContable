@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Sistema Contable</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+    
+    {% block content %}
+
+        <h3>Pantalla Tasa</h3>
+        
+        <!-- <h3>Agregar Nueva Empresa</h3>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form action="/api/addcompany" method="post">
+            <label for="nombre_empresa">Nombre de la Empresa:</label>
+            <input type="text" id="nombre_empresa" name="nombre_empresa" required>
+            <input type="submit" value="Agregar Empresa">
+        </form> -->
+    {% endblock %}
+    
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='js/inversor_T_F.js') }}"></script>
+    <title>Sistema Contable</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+    header>nav>ul.header-ul>li.list-item*4>a.link
+    {% block content %}
+        <h2>Listado de Cuentas</h2>
+        <ul>
+            {% for cuenta in cuentas %}
+                <li>{{ cuenta.nombre_cuenta }}</li>
+            {% endfor %}
+        </ul>
+        
+        <h3>Agregar Nueva Cuenta</h3>
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+        {% if mensaje_alerta %}
+            <div class="error-message">{{ mensaje_alerta }}</div>
+        {% endif %}
+        <form action="/api/addaccount" method="post">
+            <div class="form-group">
+                <label for="nombre_cuenta">Nombre de la Cuenta:</label>
+                <input type="text" id="nombre_cuenta" name="nombre_cuenta" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre_empresa">Empresa:</label>
+                <select id="id_empresa" name="id_empresa" required>
+                    {% for empresa in opciones_empresa %}
+                        <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
+                    {% endfor %}
+                </select>
+            </div>  
+
+            <div class="form-group">
+                <label for="nombre_conepto">Concepto:</label>
+                <select id="id_concepto" name="id_concepto" required>
+                    {% for concepto in opciones_concepto %}
+                        <option value="{{ concepto.id_concepto }}">{{ concepto.nombre_concepto }}</option>
+                    {% endfor %}
+                </select>
+            </div>  
+
+            <div class="form-group">
+                <label for="descr_moneda">Moneda:</label>
+                <select id="id_moneda" name="id_moneda" required>
+                    {% for moneda in opciones_moneda %}
+                        <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
+                    {% endfor %}
+                </select>
+            </div>  
+
+            <div class="form-group">
+                <label for="inversor_T_F">Es Inversor:</label>
+                <input type="checkbox" id="inversor_T_F" name="inversor_T_F" onclick="toggleInversorField()" checked>
+            </div>  
+
+            <div class="form-group" id="inversorField" style="display: block;">
+                <label for="id_inversor">Inversor:</label>
+                <select id="id_inversor" name="id_inversor" required>
+                    {% for inversor in opciones_inversor %}
+                        <option value="{{ inversor.nombre_inversor }}">{{ inversor.nombre_inversor }}</option>
+                    {% endfor %}
+                </select> 
+            </div>  
+
+            <div class="form-group">
+                <label for="tasa_T_F">¿Tiene tasa?:</label>
+                <input type="checkbox" id="tasa_T_F" name="tasa_T_F" >
+            </div>
+            <input type="submit" value="Agregar Cuenta">
+        </form>
+
+        <script>src="{{ url_for('static', filename='js/inversor_T_F.js') }}"</script>
+
+    {% endblock %}
+    
+</body>
+</html>

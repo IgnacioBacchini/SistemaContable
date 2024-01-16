@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='js/account_concept.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/value.js') }}"></script>
+    <title>Sistema Contable</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block content %}
+        <h3>Movimiento de Fondos - Nuevo</h3>
+        
+        <form action="/api/addmovement" method="post">
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" value="2024-01-05"><br>
+            </div>
+
+            <div class="form-group">
+                <label for="id_empresa">Empresa:</label>
+                <select id="id_empresa" name="id_empresa" required>
+                    {% for empresa in opciones_empresa %}
+                        <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo_de_cambio">Tipo de cambio:</label>
+                <input type="text" id="tipo_de_cambio" name="tipo_de_cambio"  required pattern="\d+\.?\d*"><br>
+            </div>
+
+            <div class="form-group">
+                <label for="id_moneda_desde">Moneda desde:</label>
+                <select id="id_moneda_desde" name="id_moneda_desde" required>
+                    {% for moneda in opciones_moneda %}
+                        <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="id_concepto_desde">Concepto desde:</label>
+                <select id="id_concepto_desde" name="id_concepto_desde" required>
+                    {% for concepto in opciones_concepto %}
+                    <option value="{{ concepto.id_concepto }}" data-cuentas="{{ concepto.cuentas }}">{{ concepto.nombre_concepto }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="id_cuenta_desde">Cuenta desde:</label>
+                <select id="id_cuenta_desde" name="id_cuenta_desde" required>
+                    {% for cuenta in opciones_cuenta %}
+                        <option value="{{ cuenta.id_cuenta }}">{{ cuenta.nombre_cuenta }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="id_moneda_hacia">Moneda hacia:</label>
+                <select id="id_moneda_hacia" name="id_moneda_hacia" required>
+                    {% for moneda in opciones_moneda %}
+                        <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="id_concepto_hacia">Concepto hacia:</label>
+                <select id="id_concepto_hacia" name="id_concepto_hacia" required>
+                    {% for concepto in opciones_concepto %}
+                        <option value="{{ concepto.id_concepto }}" data-cuentas="{{ concepto.cuentas }}">{{ concepto.nombre_concepto }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="id_cuenta_hacia">Cuenta hacia:</label>
+                <select id="id_cuenta_hacia" name="id_cuenta_hacia" required>
+                    {% for cuenta in opciones_cuenta %}
+                        <option value="{{ cuenta.id_cuenta }}">{{ cuenta.nombre_cuenta }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="valor_desde">Valor Desde:</label>
+                <input type="text" id="valor_desde" name="valor_desde"  required pattern="\d+(\.\d{1,2})?" oninput="updateValueTo()"><br>
+            </div>
+
+            <div class="form-group">
+                <label for="valor_hacia_calculado">Valor Hacia:</label>
+                <input type="text" id="valor_hacia_calculado" name="valor_hacia_calculado" readonly><br>    
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="4" cols="50" maxlength="70" ></textarea><br>
+            </div>
+                
+                <input type="submit" value="Añadir movimiento">
+        </form>
+        
+        <script>src="{{ url_for('static', filename='js/value.js') }}"</script>
+
+        <script>src="{{ url_for('static', filename='js/account_concept.js') }}"</script>
+
+    {% endblock %}
+</body>
+</html>

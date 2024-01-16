@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Sistema Contable</title>
+</head>
+<body>
+    <header>
+        <h1>Sistema de gestión</h1>
+        <nav>
+            <a href="/api/addmovement">Movimiento de Fondos</a>
+            <div class="config-option">
+                <a class="nav-link" href="#">Configuración</a>
+                <div class="dropdown-content">
+                    <a href="/api/addcompany">Empresa</a>
+                    <a href="/api/addinvestor">Inversor</a>
+                    <a href="/api/addcoin">Moneda</a>
+                    <a href="/api/addconcept">Concepto</a>
+                    <a href="/api/addrate">Tasa</a>
+                    <a href="/api/addaccount">Cuenta</a>
+                    <a href="/api/adduser">Usuario</a>
+                </div>
+            </div>
+            <!-- Otras opciones de navegación aquí -->
+            <a href="/api/balances">Saldos</a>
+            <a href="/api/reports">Reportes</a>
+        </nav>
+    </header>
+    
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    
+</body>
+</html>
