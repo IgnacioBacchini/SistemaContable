@@ -9,6 +9,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Corregido: "SQLALCHEMY_TRACK_MODIFICATIONES"
 db.init_app(app)
 
+
 # Aquí empiezan las rutas
 @app.route("/")
 def home():
@@ -346,9 +347,9 @@ def add_account():
         tasa_T_F = request.form.get("tasa_T_F","off")
 
         # Verificar si la cuenta ya existe
-        if Cuentas.query.filter_by(nombre_cuenta=nombre_cuenta).first():
-            error = "La cuenta ya existe"
-            return render_template("addaccount.html", cuentas=Cuentas.query.all(), error=error)
+        #if Cuentas.query.filter_by(nombre_cuenta=nombre_cuenta).first():
+        #    error = "La cuenta ya existe"
+        #    return render_template("addaccount.html", cuentas=Cuentas.query.all(), error=error)
 
         
         # Buscar el ID del inversor
