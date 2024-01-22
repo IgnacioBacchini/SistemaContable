@@ -11,17 +11,45 @@
     
     {% block content %}
 
-        <h3>Pantalla Tasa</h3>
+    <h3>Tasa - Nuevo</h3>
         
-        <!-- <h3>Agregar Nueva Empresa</h3>
-        {% if error %}
-            <p style="color: red;">{{ error }}</p>
-        {% endif %}
-        <form action="/api/addcompany" method="post">
-            <label for="nombre_empresa">Nombre de la Empresa:</label>
-            <input type="text" id="nombre_empresa" name="nombre_empresa" required>
-            <input type="submit" value="Agregar Empresa">
-        </form> -->
+        <form action="/api/addrate" method="post">
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" value="2024-01-05"><br>
+            </div>
+            
+            <div class="form-group" id="inversorField" style="display: block;">
+                <label for="id_inversor">Inversor:</label>
+                <select id="id_inversor" name="id_inversor" required>
+                    {% for inversor in opciones_inversor %}
+                        <option value="{{ inversor.nombre_inversor }}">{{ inversor.nombre_inversor }}</option>
+                    {% endfor %}
+                </select> 
+            </div>  
+
+            <div class="form-group">
+                <label for="id_moneda">Moneda:</label>
+                <select id="id_moneda" name="id_moneda" required>
+                    {% for moneda in opciones_moneda %}
+                        <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="act_cac">¿Actualiza por CAC?:</label>
+                <input type="checkbox" id="act_cac" name="act_cac" >
+            </div>
+
+            <div class="form-group">
+                <label for="tasa">Tasa:</label>
+                <input type="number" id="tasa" name="tasa" step="0.01" min="0" max="0.12"><br>
+            </div>
+                
+            <input type="submit" value="Añadir tasa">
+        </form>
+
     {% endblock %}
     
 </body>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Sistema Contable</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+    
+    {% block content %}
+
+        <h3>Cargar CAC</h3>
+        <form action="/api/addcac" method="post">
+            <div class="form-group">
+                <label for="uno_mes_anio">Fecha:</label>
+                <input type="date" id="uno_mes_anio" name="uno_mes_anio" value="2024-01-05"><br>
+            </div>
+
+            <div class="form-group">
+                <label for="indice">Índice:</label>
+                <input type="number" id="indice" name="indice" step="0.01" min="0" max="0.99"><br>
+            </div>
+                
+            <input type="submit" value="Añadir CAC">
+        </form>
+    {% endblock %}
+    
+</body>
+</html>

@@ -1,14 +1,18 @@
 from flask import Flask, jsonify, request, render_template
-from Models import db, RelacionMovimientos, Cuentas, Usuario, Empresa, Moneda, Concepto, Tasa, Inversor
+from Models import db, Relacion_movimientos, Cuentas, Usuario, Empresa, Moneda, Concepto, Tasa, Inversor, Indice_cac
 from logging import exception
+from datetime import date
 
 
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\APP_PRU\\database\\SistemaPRU.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\APP_PRU\\database\\SistemaPRU.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Corregido: "SQLALCHEMY_TRACK_MODIFICATIONES"
 db.init_app(app)
 
+# Ordeno las tablas
+tablas_ordenadas = [Empresa, Moneda, Usuario, Concepto, Inversor, Cuentas]
+tablas_ordenadas = sorted(tablas_ordenadas, key=lambda tabla: tabla.__tablename__)
 
 # Aquí empiezan las rutas
 @app.route("/")
@@ -27,18 +31,86 @@ def show_balances():
 def show_reports():
     return render_template("reportes.html")
 
+#----Muestro el formulario para agregar tasa----#
 @app.route("/api/addrate")
 def show_rates():
-    return render_template("addrate.html")
+    opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
+    opciones_inversor = sorted(Inversor.query.all(), key=lambda inversor: inversor.nombre_inversor)
+    return render_template("addrate.html", opciones_moneda=opciones_moneda, opciones_inversor=opciones_inversor)
+
+#----Obtengo datos del formulario tasa----#
+@app.route("/api/addrate", methods=["POST"])
+def add_rate():
+    try:
+        nombre_inversor = request.form["id_inversor"]
+        id_moneda = request.form["id_moneda"]
+        acta_cac = request.form.get("act_cac", "off")
+        fecha = request.form["fecha"]
+        tasa = request.form["tasa"]
+
+        inversor_existente = Inversor.query.filter_by(nombre_inversor=nombre_inversor).first()
+
+        # Crear un nuevo objeto Tasa
+        nueva_tasa = Tasa(
+            inversor=inversor_existente.id_inversor,
+            id_moneda=id_moneda,
+            acta_cac=acta_cac,
+            fecha=fecha,
+            tasa=tasa
+        )
+        db.session.add(nueva_tasa)
+        db.session.commit()
+
+
+        return jsonify(nueva_tasa.serialize()), 200
+    except Exception as e:
+        print(f"\n[SERVER]: Error in route /api/addrate. Log: {str(e)}\n")
+        print(f"Request data: {request.form}")
+        db.session.rollback()
+        return jsonify({"msg": "Algo ha salido mal"}), 500
+
+#----Muestro el formulario para agregar CAC----#
+@app.route("/api/addcac")
+def show_cac():
+    return render_template("addcac.html")
+
+#----Obtengo datos del formulario tasa----#
+@app.route("/api/addcac", methods=["POST"])
+def add_cac():
+    try:
+        uno_mes_anio = request.form["uno_mes_anio"]
+        indice = request.form["indice"]
+
+        # Crear un nuevo objeto Indice CAC
+        nuevo_cac = Indice_cac(
+            uno_mes_anio=uno_mes_anio,
+            indice=indice        
+        )
+        db.session.add(nuevo_cac)
+        db.session.commit()
+        
+        # Agregar el nuevo CAC
+        db.session.add(nuevo_cac)
+        db.session.commit()
+
+        return jsonify(nuevo_cac.serialize()), 200
+    except Exception as e:
+        print(f"\n[SERVER]: Error in route /api/addcac. Log: {str(e)}\n")
+        print(f"Request data: {request.form}")
+        db.session.rollback()
+        return jsonify({"msg": "Algo ha salido mal"}), 500
 
 #----Muestro el formulario para agregar movimiento----#
 @app.route("/api/addmovement", methods=["GET"])
 def show_movement_form():
-    opciones_moneda = Moneda.query.all()
-    opciones_empresa = Empresa.query.all()
-    opciones_concepto = Concepto.query.all()
-    opciones_cuenta = Cuentas.query.all()
-    return render_template("movimientos.html",opciones_cuenta=opciones_cuenta, opciones_concepto=opciones_concepto, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa)
+    opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
+    opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
+    opciones_concepto = sorted(Concepto.query.all(), key=lambda concepto: concepto.nombre_concepto)
+    opciones_cuenta = sorted(Cuentas.query.all(), key=lambda cuenta: cuenta.nombre_cuenta)
+    # Obtener la fecha actual
+    fecha_actual = date.today().strftime("%Y-%m-%d")
+    
+    return render_template("movimientos.html",fecha_actual=fecha_actual,opciones_cuenta=opciones_cuenta, opciones_concepto=opciones_concepto, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa)
 
 #----Obtengo datos del formulario movimientos----#
 @app.route("/api/get_cuentas", methods=["POST"])
@@ -96,6 +168,7 @@ def get_cuentas_hacia():
 # Modificar la función add_movement para recibir concepto_desde y concepto_hacia
 @app.route("/api/addmovement", methods=["POST"])
 def add_movement():
+    
     try:
         # Obtener los datos del formulario
         fecha = request.form["fecha"]
@@ -112,7 +185,7 @@ def add_movement():
         descripcion = request.form["descripcion"]
 
         # Crear un nuevo objeto RelacionMovimientos
-        nuevo_movimiento = RelacionMovimientos(
+        nuevo_movimiento = Relacion_movimientos(
             fecha=fecha,
             id_empresa=id_empresa,
             tipo_de_cambio=tipo_de_cambio,
@@ -155,8 +228,8 @@ def add_movement():
 #----Muestro el formulario para empresa----#
 @app.route("/api/addcompany", methods=["GET"])
 def show_company_form():
-    empresas = Empresa.query.all()
-    return render_template("addcompany.html", empresas=empresas)
+    opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
+    return render_template("addcompany.html", opciones_empresa=opciones_empresa)
 
 #----Obtengo datos del formulario para agregar empresa----#
 @app.route("/api/addcompany", methods=["POST"])
@@ -188,8 +261,8 @@ def add_company():
 #----Muestro el formulario para inversor----#
 @app.route("/api/addinvestor", methods=["GET"])
 def show_investor_form():
-    inversores = Inversor.query.all()
-    return render_template("addinvestor.html", inversores=inversores)
+    opciones_inversor = sorted(Inversor.query.all(), key=lambda inversor: inversor.nombre_inversor)
+    return render_template("addinvestor.html", opciones_inversor=opciones_inversor)
 
 #----Obtengo datos del formulario para agregar inversor----#
 @app.route("/api/addinvestor", methods=["POST"])
@@ -221,8 +294,8 @@ def add_investor():
 #----Muestro el formulario para moneda----#
 @app.route("/api/addcoin", methods=["GET"])
 def show_coin_form():
-    monedas = Moneda.query.all()
-    return render_template("addcoin.html", monedas=monedas)
+    opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
+    return render_template("addcoin.html", opciones_moneda=opciones_moneda)
 
 #----Obtengo datos del formulario para agregar moneda----#
 @app.route("/api/addcoin", methods=["POST"])
@@ -254,8 +327,8 @@ def add_coin():
 #----Muestro el formulario para conceptos----#
 @app.route("/api/addconcept", methods=["GET"])
 def show_concept_form():
-    conceptos = Concepto.query.all()
-    return render_template("addconcept.html", conceptos=conceptos)
+    opciones_concepto = sorted(Concepto.query.all(), key=lambda concepto: concepto.nombre_concepto)
+    return render_template("addconcept.html", opciones_concepto=opciones_concepto)
 
 #----Obtengo datos del formulario para agregar concepto----#
 @app.route("/api/addconcept", methods=["POST"])
@@ -287,8 +360,8 @@ def add_concept():
 #----Muestro el formulario para usuarios----#
 @app.route("/api/adduser", methods=["GET"])
 def show_user_form():
-    usuarios = Usuario.query.all()
-    return render_template("adduser.html", usuarios=usuarios)
+    opciones_usuario = sorted(Usuario.query.all(), key=lambda usuario: usuario.nombre_usuario)
+    return render_template("adduser.html", opciones_usuario=opciones_usuario)
 
 #----Obtengo datos del formulario para agregar usuario----#
 @app.route("/api/adduser", methods=["POST"])
@@ -326,12 +399,12 @@ def add_user():
 #----Muestro el formulario para agregar cuenta----#
 @app.route("/api/addaccount", methods=["GET"])
 def show_account_form():
-    opciones_moneda = Moneda.query.all()
-    opciones_empresa = Empresa.query.all()
-    opciones_concepto = Concepto.query.all()
-    opciones_inversor = Inversor.query.all()
-    cuentas = Cuentas.query.all()
-    return render_template("addaccount.html",opciones_inversor=opciones_inversor,cuentas=cuentas, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa, opciones_concepto=opciones_concepto)
+    opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
+    opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
+    opciones_concepto = sorted(Concepto.query.all(), key=lambda concepto: concepto.nombre_concepto)
+    opciones_cuenta = sorted(Cuentas.query.all(), key=lambda cuenta: cuenta.nombre_cuenta)
+    opciones_inversor = sorted(Inversor.query.all(), key=lambda inversor: inversor.nombre_inversor)
+    return render_template("addaccount.html",opciones_inversor=opciones_inversor,opciones_cuenta=opciones_cuenta, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa, opciones_concepto=opciones_concepto)
 
 #----Obtengo datos del formulario cuenta----#
 @app.route("/api/addaccount", methods=["POST"])
@@ -387,7 +460,6 @@ def add_account():
         print(f"Request data: {request.form}")
         db.session.rollback()
         return jsonify({"msg": "Algo ha salido mal"}), 500
-
 
 if __name__ == "__main__":
     app.run(debug=True, port=4000)

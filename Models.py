@@ -83,8 +83,7 @@ class Cuentas(db.Model):
             'tasa_T_F': self.tasa_T_F
         }
 
-class RelacionMovimientos(db.Model):
-    __tablename__ = 'RELACION MOVIMIENTOS'
+class Relacion_movimientos(db.Model):
     id_movimiento = db.Column(db.Integer, primary_key=True)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'))
     fecha = db.Column(db.Text)
@@ -129,15 +128,34 @@ class RelacionMovimientos(db.Model):
 
 class Tasa(db.Model):
     id_tasa = db.Column(db.Integer, unique=True, primary_key=True)
-    id_cuenta = db.Column(db.Integer, db.ForeignKey('cuentas.id_cuenta'))
+    inversor = db.Column(db.Integer, db.ForeignKey('inversor.id_inversor'))    
+    id_moneda = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
+    acta_cac = db.Column(db.Integer)
     fecha = db.Column(db.Text)
     tasa = db.Column(db.Float)   
+    
+    # Define las relaciones
+    id_inversor = db.relationship('Inversor', foreign_keys=[inversor])
+    moneda = db.relationship('Moneda', foreign_keys=[id_moneda])
     
     def serialize(self):
         return {
             'id_tasa': self.id_tasa,
-            'id_cuenta': self.id_cuenta,
+            'inversor': self.inversor,
+            'id_moneda': self.id_moneda,
+            'acta_cac': self.acta_cac,
             'fecha': self.fecha,
             'tasa': self.tasa
         }
     
+class Indice_cac(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uno_mes_anio = db.Column(db.Text)
+    indice = db.Column(db.Float)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'uno_mes_anio': self.uno_mes_anio,
+            'indice': self.indice
+        }
