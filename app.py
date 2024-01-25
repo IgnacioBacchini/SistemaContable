@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, render_template
-from Models import db, Relacion_movimientos, Cuentas, Usuario, Empresa, Moneda, Concepto, Tasa, Inversor, Indice_cac
+from Models import db, RelacionMovimientos, Cuentas, Usuario, Empresa, Moneda, Concepto, Tasa, Inversor, Indice_cac
 from logging import exception
 from datetime import date
 
@@ -185,7 +185,7 @@ def add_movement():
         descripcion = request.form["descripcion"]
 
         # Crear un nuevo objeto RelacionMovimientos
-        nuevo_movimiento = Relacion_movimientos(
+        nuevo_movimiento = RelacionMovimientos(
             fecha=fecha,
             id_empresa=id_empresa,
             tipo_de_cambio=tipo_de_cambio,
@@ -404,7 +404,8 @@ def show_account_form():
     opciones_concepto = sorted(Concepto.query.all(), key=lambda concepto: concepto.nombre_concepto)
     opciones_cuenta = sorted(Cuentas.query.all(), key=lambda cuenta: cuenta.nombre_cuenta)
     opciones_inversor = sorted(Inversor.query.all(), key=lambda inversor: inversor.nombre_inversor)
-    return render_template("addaccount.html",opciones_inversor=opciones_inversor,opciones_cuenta=opciones_cuenta, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa, opciones_concepto=opciones_concepto)
+    opciones_tasa = sorted(Tasa.query.all(), key=lambda tasa: tasa.fecha) 
+    return render_template("addaccount.html",opciones_tasa=opciones_tasa,opciones_inversor=opciones_inversor,opciones_cuenta=opciones_cuenta, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa, opciones_concepto=opciones_concepto)
 
 #----Obtengo datos del formulario cuenta----#
 @app.route("/api/addaccount", methods=["POST"])
@@ -424,7 +425,7 @@ def add_account():
         #    error = "La cuenta ya existe"
         #    return render_template("addaccount.html", cuentas=Cuentas.query.all(), error=error)
 
-        
+
         # Buscar el ID del inversor
         id_inversor = None if inversor_T_F == "off" else None  # Valor por defecto
 

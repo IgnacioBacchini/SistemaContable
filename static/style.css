@@ -182,7 +182,6 @@ li:hover {
   display: block;
 }
 
-
 .error-message {
   color: white;
   background-color: #ff5050; /* Color de fondo del mensaje de error */
@@ -196,3 +195,41 @@ li:hover {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
 }
 
+.styled-table-container {
+  margin: 35px 35px 0; /* Elimina el espacio inferior adicional */
+}
+
+.styled-table {
+  max-height: 400px; /* Ajusta el alto máximo según tus preferencias */
+  border-collapse: collapse;
+  max-width: 100%; /* Permitir que la tabla se expanda automáticamente */
+  font-size: 16px;
+  text-align: left;
+  overflow-y: auto; /* Agrega una barra de desplazamiento vertical si es necesario */
+  table-layout: auto; /* Hace que la tabla ajuste el ancho según el contenido */
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  word-wrap: break-word;
+  overflow: hidden;
+  white-space: nowrap; /* Evita que el contenido se desborde horizontalmente */
+}
+
+.styled-table th {
+  background-color: #f2f2f2;
+  white-space: nowrap;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.dataTables_filter input {
+  /* Estilos para el cuadro de búsqueda */
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 4px;
+}

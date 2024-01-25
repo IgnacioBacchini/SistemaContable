@@ -83,7 +83,7 @@ class Cuentas(db.Model):
             'tasa_T_F': self.tasa_T_F
         }
 
-class Relacion_movimientos(db.Model):
+class RelacionMovimientos(db.Model):
     id_movimiento = db.Column(db.Integer, primary_key=True)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'))
     fecha = db.Column(db.Text)
