@@ -5,9 +5,9 @@ from datetime import date
 
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\APP_PRU\\database\\SistemaPRU.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\APP_PRU\\database\\SistemaPRU.db"
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///"C:\\Users\\micae\\Desktop\\SistemaContable\\database\\SistemaPRU.db""
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\micae\\Desktop\\SistemaContable\\database\\SistemaPRU.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Corregido: "SQLALCHEMY_TRACK_MODIFICATIONES"
 db.init_app(app)
 
@@ -16,7 +16,11 @@ tablas_ordenadas = [Empresa, Moneda, Usuario, Concepto, Inversor, Cuentas]
 tablas_ordenadas = sorted(tablas_ordenadas, key=lambda tabla: tabla.__tablename__)
 
 # Aquí empiezan las rutas
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
+def login():
+    return render_template("login.html")
+
+@app.route("/index", methods=["GET", "POST"])
 def home():
     return render_template("index.html")
 
