@@ -6,8 +6,8 @@ from datetime import date
 
 app = Flask(__name__)
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\APP_PRU\\database\\SistemaPRU.db"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\micae\\Desktop\\SistemaContable\\database\\SistemaPRU.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/Micaela/SistemaContable/database/SistemaPRU.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Corregido: "SQLALCHEMY_TRACK_MODIFICATIONES"
 db.init_app(app)
 

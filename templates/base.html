@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Sistema Contable</title>
 </head>
-<body>
-    <header>
-        <h1>Sistema de gestión</h1>
+<body class="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-800 container mx-auto">
+    <header class="">
+    <div class="grid place-content-center">
+        <h1 class="text-5xl text-white ">Sistema de gestión</h1>
+    </div>
         <nav>
             <a href="/api/addmovement">Movimiento de Fondos</a>
             <div class="config-option">
                 <a class="nav-link" href="#">Configuración</a>
-                <div class="dropdown-content">
-                    <a href="/api/addcompany">Empresa</a>
+                <div class="dropdown-content ">
+                    <a class="text-black" href="/api/addcompany">Empresa</a>
                     <a href="/api/addinvestor">Inversor</a>
                     <a href="/api/addcoin">Moneda</a>
                     <a href="/api/addconcept">Concepto</a>

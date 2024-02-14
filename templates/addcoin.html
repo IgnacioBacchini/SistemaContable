@@ -7,12 +7,16 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
     <title>Sistema Contable</title>
 </head>
 <body>
     {% extends 'base.html' %}
     
     {% block content %}
+    <div class="bg-gradient-to-r from-neutral-700 via-neutral-600 to-neutral-700 mx-64 rounded-xl shadow-2xl shadow-white">
 
         <h2>Listado de Monedas</h2>
         <div class="styled-table-container">
@@ -42,6 +46,7 @@
             </div>
             <input type="submit" value="Agregar Moneda">
         </form>
+    </div>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
     {% endblock %}
     
