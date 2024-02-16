@@ -8,19 +8,16 @@ header {
   font-size: 15px;
   color: #3d437d;
   padding: 10px;
-  text-align: right;
 }
 
 nav {
   background-color: #1d2e4e;
-  text-align: left;
   margin-bottom: 20px;
   margin: 25px;
   padding: 20px;
 }
 
 nav a {
-  text-align: left;
   padding: 20px;
   text-decoration: none;
   color: #ffffff;
@@ -233,4 +230,3 @@ li:hover {
   padding: 5px;
   border-radius: 4px;
 }
-
