@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 
 db = SQLAlchemy()
 
@@ -44,15 +45,60 @@ class Concepto(db.Model):
             'id_concepto': self.id_concepto,
             'nombre_concepto': self.nombre_concepto
         }
-
-class Inversor(db.Model):
-    id_inversor = db.Column(db.Integer, unique=True, primary_key=True)
-    nombre_inversor = db.Column(db.Text)
+class Inversor_prestamista_deudor(db.Model):
+    id_inversor_prestamista_deudor = db.Column(db.Integer, unique=True, primary_key=True)
+    nombre_inversor_prestamista_deudor = db.Column(db.Text)
+    inversor_o_prestamista_o_deudor = db.Column(db.Text)
     
     def serialize(self):
         return {
-            'id_inversor': self.id_inversor,
-            'nombre_inversor': self.nombre_inversor
+            'id_inversor_prestamista_deudor': self.id_inversor_prestamista_deudor,
+            'nombre_inversor_prestamista_deudor': self.nombre_inversor_prestamista_deudor,
+            'inversor_o_prestamista_o_deudor': self.inversor_o_prestamista_o_deudor
+        }
+
+class Proyecto(db.Model):
+    id_proyecto = db.Column(db.Integer, unique=True, primary_key=True)
+    nombre_proyecto = db.Column(db.Text)
+    fecha_fin_obra = db.Column(db.Date)
+    
+    def serialize(self):
+        return {
+            'id_proyecto': self.id_proyecto,
+            'nombre_proyecto': self.nombre_proyecto,
+            'fecha_fin_obra': self.fecha_fin_obra,
+        }
+
+class Contrato(db.Model):
+    id_contrato = db.Column(db.Integer, unique=True, primary_key=True)
+    nombre_contrato = db.Column(db.Text)    
+    id_inversor_prestamista_deudor = db.Column(db.Integer, db.ForeignKey('inversor_prestamista_deudor.id_inversor_prestamista_deudor'))
+    id_empresa = db.Column(db.Integer, db.ForeignKey('empresa.id_empresa'))
+    id_proyecto = db.Column(db.Integer, db.ForeignKey('proyecto.id_proyecto'))
+    id_moneda = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
+    inversor_o_prestamista_o_deudor = db.Column(db.Text)
+    tasa_anual = db.Column(db.Float)
+    aplica_CAC_T_F = db.Column(db.Boolean)
+    monto_contrato = db.Column(db.Float)
+    
+    # Define las relaciones
+    inversor_prestamista_deudor = db.relationship('Inversor_prestamista_deudor', foreign_keys=[id_inversor_prestamista_deudor])
+    empresa = db.relationship('Empresa', foreign_keys=[id_empresa])
+    moneda = db.relationship('Moneda', foreign_keys=[id_moneda])
+    proyecto = db.relationship('Proyecto',foreign_keys=[id_proyecto])
+    
+    def serialize(self):
+        return {
+            'id_contrato': self.id_contrato,
+            'nombre_contrato': self.nombre_contrato,
+            'id_inversor_prestamista_deudor': self.id_inversor_prestamista_deudor,
+            'id_empresa': self.id_empresa,
+            'id_proyecto': self.id_proyecto,
+            'id_moneda': self.id_moneda,
+            'inversor_o_prestamista_o_deudor': self.inversor_o_prestamista_o_deudor,
+            'tasa_anual': self.tasa_anual,
+            'aplica_CAC_T_F': self.aplica_CAC_T_F,
+            'monto_contrato': self.monto_contrato,
         }
 
 class Cuentas(db.Model):
@@ -61,16 +107,18 @@ class Cuentas(db.Model):
     id_concepto = db.Column(db.Integer, db.ForeignKey('concepto.id_concepto'))
     id_moneda = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
     nombre_cuenta = db.Column(db.Text)
-    inversor_T_F = db.Column(db.Integer)
-    id_inversor = db.Column(db.Integer, db.ForeignKey('inversor.id_inversor'))
-    tasa_T_F = db.Column(db.Integer)
+    inversor_prestamista_deudor_T_F = db.Column(db.Boolean)
+    id_inversor_prestamista_deudor = db.Column(db.Integer, db.ForeignKey('inversor_prestamista_deudor.id_inversor_prestamista_deudor'))
+    tipo_cta = db.Column(db.Text)
+    id_contrato = db.Column(db.Integer, db.ForeignKey('contrato.id_contrato'))
 
     # Define las relaciones
     empresa = db.relationship('Empresa', foreign_keys=[id_empresa])
     concepto = db.relationship('Concepto', foreign_keys=[id_concepto])
     moneda = db.relationship('Moneda', foreign_keys=[id_moneda])
-    inversor = db.relationship('Inversor', foreign_keys=[id_inversor])
-
+    inversor_prestamista_deudor = db.relationship('Inversor_prestamista_deudor', foreign_keys=[id_inversor_prestamista_deudor])
+    contrato = db.relationship('Contrato', foreign_keys=[id_contrato])
+    
     def serialize(self):
         return {
             'id_cuenta': self.id_cuenta,
@@ -78,15 +126,16 @@ class Cuentas(db.Model):
             'id_concepto': self.id_concepto,
             'id_moneda': self.id_moneda,
             'nombre_cuenta': self.nombre_cuenta,
-            'inversor_T_F': self.inversor_T_F,
-            'id_inversor': self.id_inversor,
-            'tasa_T_F': self.tasa_T_F
+            'inversor_prestamista_deudor_T_F': self.inversor_prestamista_deudor_T_F,
+            'id_inversor_prestamista_deudor': self.id_inversor_prestamista_deudor,
+            'tipo_cta': self.tipo_cta,
+            'id_contrato': self.id_contrato
         }
 
 class RelacionMovimientos(db.Model):
     id_movimiento = db.Column(db.Integer, primary_key=True)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'))
-    fecha = db.Column(db.Text)
+    fecha = db.Column(db.Date)
     id_empresa = db.Column(db.Integer, db.ForeignKey('empresa.id_empresa'))
     id_moneda_hacia = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
     id_moneda_desde = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
@@ -125,32 +174,10 @@ class RelacionMovimientos(db.Model):
             'valor_hacia_calculado': self.valor_hacia_calculado,
             'descripcion': self.descripcion,
         }
-
-class Tasa(db.Model):
-    id_tasa = db.Column(db.Integer, unique=True, primary_key=True)
-    inversor = db.Column(db.Integer, db.ForeignKey('inversor.id_inversor'))    
-    id_moneda = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
-    acta_cac = db.Column(db.Integer)
-    fecha = db.Column(db.Text)
-    tasa = db.Column(db.Float)   
-    
-    # Define las relaciones
-    id_inversor = db.relationship('Inversor', foreign_keys=[inversor])
-    moneda = db.relationship('Moneda', foreign_keys=[id_moneda])
-    
-    def serialize(self):
-        return {
-            'id_tasa': self.id_tasa,
-            'inversor': self.inversor,
-            'id_moneda': self.id_moneda,
-            'acta_cac': self.acta_cac,
-            'fecha': self.fecha,
-            'tasa': self.tasa
-        }
     
 class Indice_cac(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    uno_mes_anio = db.Column(db.Text)
+    uno_mes_anio = db.Column(db.Date)
     indice = db.Column(db.Float)
 
     def serialize(self):
@@ -159,3 +186,4 @@ class Indice_cac(db.Model):
             'uno_mes_anio': self.uno_mes_anio,
             'indice': self.indice
         }
+

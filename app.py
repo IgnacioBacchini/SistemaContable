@@ -1,91 +1,101 @@
-from flask import Flask, jsonify, request, render_template
-from Models import db, RelacionMovimientos, Cuentas, Usuario, Empresa, Moneda, Concepto, Tasa, Inversor, Indice_cac
+from flask import Flask, jsonify, request, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from logging import exception
-from datetime import date
+from datetime import date, datetime
+# Importa tus modelos SQLAlchemy
+from Models import *
 
-
+# Configuración de la aplicación Flask
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\APP_PRU\\database\\SistemaPRU.db"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\SistemaContable\\database\\SistemaPRU.db"
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\micae\\Desktop\\SistemaContable\\database\\SistemaPRU.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\micae\\Desktop\\SistemaContable\\database\\SistemaPRU.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Corregido: "SQLALCHEMY_TRACK_MODIFICATIONES"
 db.init_app(app)
 
 # Ordeno las tablas
-tablas_ordenadas = [Empresa, Moneda, Usuario, Concepto, Inversor, Cuentas]
+tablas_ordenadas = [Empresa, Moneda, Usuario, Concepto, Inversor_prestamista_deudor, Cuentas]
 tablas_ordenadas = sorted(tablas_ordenadas, key=lambda tabla: tabla.__tablename__)
 
+#Calculo RENTA ESPERA
+from calculadora_RE import *
+
 # Aquí empiezan las rutas
-@app.route("/", methods=["GET", "POST"])
-def login():
-    return render_template("login.html")
 
 @app.route("/index", methods=["GET", "POST"])
 def home():
     return render_template("index.html")
 
+def pagina_no_encontrada(error):
+    return "<h1>La página que intentas buscar no existe...</h1>"
+
 @app.route("/api/base")
 def show_main():
     return render_template("base.html")
 
-@app.route("/api/balances")
-def show_balances():
-    return render_template("saldos.html")
+@app.route("/api/inversor")
+def show_inversor():
+    return render_template("inversor.html")
 
-@app.route("/api/reports")
-def show_reports():
-    return render_template("reportes.html")
+@app.route("/api/saldo")
+def show_saldos():
+    return render_template("saldo.html")
 
-#----Muestro el formulario para agregar tasa----#
-@app.route("/api/addrate")
-def show_rates():
-    opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
-    opciones_inversor = sorted(Inversor.query.all(), key=lambda inversor: inversor.nombre_inversor)
-    return render_template("addrate.html", opciones_moneda=opciones_moneda, opciones_inversor=opciones_inversor)
+@app.route("/api/caja")
+def show_caja():
+    return render_template("caja.html")
 
-#----Obtengo datos del formulario tasa----#
-@app.route("/api/addrate", methods=["POST"])
-def add_rate():
-    try:
-        nombre_inversor = request.form["id_inversor"]
-        id_moneda = request.form["id_moneda"]
-        acta_cac = request.form.get("act_cac", "off")
-        fecha = request.form["fecha"]
-        tasa = request.form["tasa"]
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        nombre_usuario = request.form['nombre_usuario']
+        contrasenia = request.form['contrasenia']
+        
+        # Consultar la base de datos para verificar las credenciales
+        usuario = Usuario.query.filter_by(nombre_usuario=nombre_usuario, contrasenia_usuario=contrasenia).first()
+        
+        if usuario:
+            # Autenticación exitosa, redirigir al usuario a la página principal
+            return redirect(url_for('home'))
+        else:
+            # Si las credenciales son incorrectas, muestra un mensaje de error
+            error = 'Nombre de usuario o contraseña incorrectos. Inténtalo de nuevo.'
 
-        inversor_existente = Inversor.query.filter_by(nombre_inversor=nombre_inversor).first()
+    # Si es un GET request, renderiza la página de inicio de sesión
+    return render_template('login.html', error=error)
 
-        # Crear un nuevo objeto Tasa
-        nueva_tasa = Tasa(
-            inversor=inversor_existente.id_inversor,
-            id_moneda=id_moneda,
-            acta_cac=acta_cac,
-            fecha=fecha,
-            tasa=tasa
-        )
-        db.session.add(nueva_tasa)
-        db.session.commit()
-
-
-        return jsonify(nueva_tasa.serialize()), 200
-    except Exception as e:
-        print(f"\n[SERVER]: Error in route /api/addrate. Log: {str(e)}\n")
-        print(f"Request data: {request.form}")
-        db.session.rollback()
-        return jsonify({"msg": "Algo ha salido mal"}), 500
+@app.route("/api/rent", methods=["GET", "POST"])
+def calcular_renta():
+    if request.method == "POST":
+        try:
+            # Realizar la consulta SQL sobre la tabla CUENTAS
+            resultado = consultar_cuentas_inversores()  # Por ejemplo, la cantidad de cuentas obtenidas
+            return render_template("resultado_renta.html", resultado=resultado)
+        except Exception as e:
+            print(f"\n[SERVER]: Error en la ruta /api/rent. Log: {str(e)}\n")
+            return jsonify({"error": "¡Algo salió mal al realizar la consulta!"}), 500
+    else:
+        # Aquí se muestra el formulario para ingresar los datos
+        return render_template("rent.html")
 
 #----Muestro el formulario para agregar CAC----#
 @app.route("/api/addcac")
 def show_cac():
-    return render_template("addcac.html")
+    opciones_cac = sorted(Indice_cac.query.all(), key=lambda cac: cac.indice)
+    return render_template("addcac.html",opciones_cac=opciones_cac)
 
 #----Obtengo datos del formulario tasa----#
 @app.route("/api/addcac", methods=["POST"])
 def add_cac():
     try:
-        uno_mes_anio = request.form["uno_mes_anio"]
+        uno_mes_anio_str = request.form["uno_mes_anio"]
         indice = request.form["indice"]
 
+        uno_mes_anio = datetime.strptime(uno_mes_anio_str, "%Y-%m-%d")
+        
         # Crear un nuevo objeto Indice CAC
         nuevo_cac = Indice_cac(
             uno_mes_anio=uno_mes_anio,
@@ -94,11 +104,8 @@ def add_cac():
         db.session.add(nuevo_cac)
         db.session.commit()
         
-        # Agregar el nuevo CAC
-        db.session.add(nuevo_cac)
-        db.session.commit()
 
-        return jsonify(nuevo_cac.serialize()), 200
+        return redirect(url_for('show_cac'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/addcac. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
@@ -176,7 +183,7 @@ def add_movement():
     
     try:
         # Obtener los datos del formulario
-        fecha = request.form["fecha"]
+        fecha_str = request.form["fecha"]
         id_empresa = request.form["id_empresa"]
         tipo_de_cambio = request.form["tipo_de_cambio"]
         id_moneda_desde = request.form["id_moneda_desde"]
@@ -188,6 +195,8 @@ def add_movement():
         valor_desde = request.form["valor_desde"]
         valor_hacia_calculado = request.form["valor_hacia_calculado"]
         descripcion = request.form["descripcion"]
+
+        fecha = datetime.strptime(fecha_str, "%Y-%m-%d")
 
         # Crear un nuevo objeto RelacionMovimientos
         nuevo_movimiento = RelacionMovimientos(
@@ -211,19 +220,7 @@ def add_movement():
         # Confirmar los cambios en la base de datos
         db.session.commit()
 
-        # Obtener las cuentas asociadas a los conceptos desde y hacia
-        cuentas_desde = Cuentas.query.filter_by(id_concepto=id_concepto_desde).all()
-        cuentas_hacia = Cuentas.query.filter_by(id_concepto=id_concepto_hacia).all()
-
-        # Serializar y enviar información filtrada al cliente
-        cuentas_desde_serialized = [cuenta.serialize() for cuenta in cuentas_desde]
-        cuentas_hacia_serialized = [cuenta.serialize() for cuenta in cuentas_hacia]
-
-        return jsonify({
-            "movimiento": nuevo_movimiento.serialize(),
-            "cuentas_desde": cuentas_desde_serialized,
-            "cuentas_hacia": cuentas_hacia_serialized
-        }), 200
+        return redirect(url_for('show_movement_form'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/addmovement. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
@@ -256,46 +253,83 @@ def add_company():
         db.session.add(nueva_empresa)
         db.session.commit()
 
-        return jsonify(nueva_empresa.serialize()), 200
+        return redirect(url_for('show_company_form'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/addcompany. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
         db.session.rollback()
         return jsonify({"msg": "Algo ha salido mal"}), 500
     
-#----Muestro el formulario para inversor----#
+#----Muestro el formulario para inversor_prestamista_deudor----#
 @app.route("/api/addinvestor", methods=["GET"])
 def show_investor_form():
-    opciones_inversor = sorted(Inversor.query.all(), key=lambda inversor: inversor.nombre_inversor)
-    return render_template("addinvestor.html", opciones_inversor=opciones_inversor)
+    opciones_inversor_prestamista_deudor = sorted(Inversor_prestamista_deudor.query.all(), key=lambda inversor_prestamista_deudor: inversor_prestamista_deudor.nombre_inversor_prestamista_deudor)
+    return render_template("addinvestor.html", opciones_inversor_prestamista_deudor=opciones_inversor_prestamista_deudor)
 
-#----Obtengo datos del formulario para agregar inversor----#
+#----Obtengo datos del formulario para agregar inversor_prestamista_deudor----#
 @app.route("/api/addinvestor", methods=["POST"])
 def add_investor():
     try:
-        nombre_inversor = request.form["nombre_inversor"]
-
-        # Verificar si el inversor ya existe
-        if Inversor.query.filter_by(nombre_inversor=nombre_inversor).first():
-            error = "El inversor ya existe"
-            return render_template("addinvestor.html", inversores=Inversor.query.all(), error=error)        
+        nombre_inversor_prestamista_deudor = request.form["nombre_inversor_prestamista_deudor"]
+        inversor_o_prestamista_o_deudor = request.form["inversor_o_prestamista_o_deudor"]
         
-        # Crear un nuevo objeto Inversor
-        nuevo_inversor = Inversor(nombre_inversor=nombre_inversor)
-        db.session.add(nuevo_inversor)
+        # Verificar si el inversor_prestamista_deudor ya existe
+        if Inversor_prestamista_deudor.query.filter_by(nombre_inversor_prestamista_deudor=nombre_inversor_prestamista_deudor).first():
+            error = "El inversor_prestamista_deudor ya existe"
+            return render_template("addinvestor.html", inversor_prestamista_deudor=Inversor_prestamista_deudor.query.all(), error=error)        
+        
+        # Crear un nuevo objeto inversor_prestamista_deudor
+        nuevo_inversor_prestamista_deudor = Inversor_prestamista_deudor(
+            nombre_inversor_prestamista_deudor=nombre_inversor_prestamista_deudor,
+            inversor_o_prestamista_o_deudor=inversor_o_prestamista_o_deudor
+            )
+        db.session.add(nuevo_inversor_prestamista_deudor)
         db.session.commit()
         
-        # Agregar el nuevo inversor a la base de datos
-        db.session.add(nuevo_inversor)
-        db.session.commit()
-
-        return jsonify(nuevo_inversor.serialize()), 200
+        return redirect(url_for('show_investor_form'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/addinvestor. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
         db.session.rollback()
         return jsonify({"msg": "Algo ha salido mal"}), 500
+
+#----Muestro el formulario para proyecto----#
+@app.route("/api/addproyect", methods=["GET"])
+def show_proyect_form():
+    opciones_proyecto = sorted(Proyecto.query.all(), key=lambda proyecto: proyecto.nombre_proyecto)
+    return render_template("addproyect.html", opciones_proyecto=opciones_proyecto)
+
+#----Obtengo datos del formulario para agregar proyecto----#
+@app.route("/api/addproyect", methods=["POST"])
+def add_proyect():
+    try:
+        nombre_proyecto = request.form["nombre_proyecto"]
+        fecha_fin_obra_str = request.form["fecha_fin_obra"]        
+                
+        fecha_fin_obra = datetime.strptime(fecha_fin_obra_str, "%Y-%m-%d")
+
     
+        # Verificar si el proyecto ya existe
+        if Proyecto.query.filter_by(nombre_proyecto=nombre_proyecto).first():
+            error = "El proyecto ya existe"
+            return render_template("addproyect.html", nombre_proyecto=Proyecto.query.all(), error=error)        
+        
+        # Crear un nuevo objeto proyecto
+        nuevo_proyecto = Proyecto(
+            nombre_proyecto=nombre_proyecto,
+            fecha_fin_obra=fecha_fin_obra
+            )
+        db.session.add(nuevo_proyecto)
+        db.session.commit()
+        
+        return redirect(url_for('show_proyect_form'))
+    except Exception as e:
+        print(f"\n[SERVER]: Error in route /api/addproyect. Log: {str(e)}\n")
+        print(f"Request data: {request.form}")
+        db.session.rollback()
+        return jsonify({"msg": "Algo ha salido mal"}), 500
+
+
 #----Muestro el formulario para moneda----#
 @app.route("/api/addcoin", methods=["GET"])
 def show_coin_form():
@@ -318,11 +352,8 @@ def add_coin():
         db.session.add(nueva_moneda)
         db.session.commit()
         
-        # Agregar la nueva moneda a la base de datos
-        db.session.add(nueva_moneda)
-        db.session.commit()
 
-        return jsonify(nueva_moneda.serialize()), 200
+        return redirect(url_for('show_coin_form'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/addcoin. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
@@ -351,11 +382,7 @@ def add_concept():
         db.session.add(nuevo_concepto)
         db.session.commit()
         
-        # Agregar el nuevo movimiento a la base de datos
-        db.session.add(nuevo_concepto)
-        db.session.commit()
-
-        return jsonify(nuevo_concepto.serialize()), 200
+        return redirect(url_for('show_concept_form'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/addconcept. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
@@ -390,11 +417,8 @@ def add_user():
         db.session.add(nuevo_usuario)
         db.session.commit()
         
-        # Agregar el nuevo movimiento a la base de datos
-        db.session.add(nuevo_usuario)
-        db.session.commit()
 
-        return jsonify(nuevo_usuario.serialize()), 200
+        return redirect(url_for('show_user_form'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/adduser. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
@@ -408,64 +432,107 @@ def show_account_form():
     opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
     opciones_concepto = sorted(Concepto.query.all(), key=lambda concepto: concepto.nombre_concepto)
     opciones_cuenta = sorted(Cuentas.query.all(), key=lambda cuenta: cuenta.nombre_cuenta)
-    opciones_inversor = sorted(Inversor.query.all(), key=lambda inversor: inversor.nombre_inversor)
-    opciones_tasa = sorted(Tasa.query.all(), key=lambda tasa: tasa.fecha) 
-    return render_template("addaccount.html",opciones_tasa=opciones_tasa,opciones_inversor=opciones_inversor,opciones_cuenta=opciones_cuenta, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa, opciones_concepto=opciones_concepto)
+    opciones_contrato = sorted(Contrato.query.all(), key=lambda contrato: contrato.nombre_contrato)
+    opciones_inversor_prestamista_deudor = sorted(Inversor_prestamista_deudor.query.all(), key=lambda inversor_prestamista_deudor: inversor_prestamista_deudor.nombre_inversor_prestamista_deudor)
+    
+    return render_template("addaccount.html",opciones_contrato=opciones_contrato, opciones_inversor_prestamista_deudor=opciones_inversor_prestamista_deudor,opciones_cuenta=opciones_cuenta, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa, opciones_concepto=opciones_concepto)
 
 #----Obtengo datos del formulario cuenta----#
 @app.route("/api/addaccount", methods=["POST"])
 def add_account():
     try:
-        # id_usuario = request.form["id_usuario"]
         id_empresa = request.form["id_empresa"]
         id_concepto = request.form["id_concepto"]
         id_moneda = request.form["id_moneda"]
         nombre_cuenta = request.form["nombre_cuenta"]
-        inversor_T_F = request.form.get("inversor_T_F", "off")  # Utiliza request.form.get para manejar el caso de que la casilla no esté marcada
-        nombre_inversor = request.form["id_inversor"]
-        tasa_T_F = request.form.get("tasa_T_F","off")
-
-        # Verificar si la cuenta ya existe
-        #if Cuentas.query.filter_by(nombre_cuenta=nombre_cuenta).first():
-        #    error = "La cuenta ya existe"
-        #    return render_template("addaccount.html", cuentas=Cuentas.query.all(), error=error)
-
-
-        # Buscar el ID del inversor
-        id_inversor = None if inversor_T_F == "off" else None  # Valor por defecto
-
-        if inversor_T_F == "on":
-            inversor_existente = Inversor.query.filter_by(nombre_inversor=nombre_inversor).first()
-
-            if not inversor_existente:
-                # Si el inversor no existe y se marcó como inversor, muestra un mensaje de alerta
-                mensaje_alerta = "Debe cargar en primer lugar dicho inversor"
-                return render_template("addaccount.html", cuentas=Cuentas.query.all(), mensaje_alerta=mensaje_alerta)
-
-            id_inversor = inversor_existente.id_inversor
+        inversor_prestamista_deudor_T_F = request.form.get("inversor_prestamista_deudor_T_F") == "on"  # Utiliza request.form.get para manejar el caso de que la casilla no esté marcada
+        # Obtener los valores relacionados con el agente financiero si el checkbox está marcado
+        if inversor_prestamista_deudor_T_F:
+            id_inversor_prestamista_deudor = request.form["id_inversor_prestamista_deudor"]
+            tipo_cta = request.form["tipo_cta"]
+            id_contrato = request.form["id_contrato"]
+        else:
+            # Establecer los valores como nulos si el checkbox no está marcado
+            id_inversor_prestamista_deudor = None
+            tipo_cta = None
+            id_contrato = None
 
         # Crear un nuevo objeto Cuentas
         nueva_cuenta = Cuentas(
-            # id_usuario=id_usuario,
             id_empresa=id_empresa,
             id_concepto=id_concepto,
             id_moneda=id_moneda,
             nombre_cuenta=nombre_cuenta,
-            inversor_T_F=inversor_T_F,
-            id_inversor=id_inversor,
-            tasa_T_F=tasa_T_F
+            inversor_prestamista_deudor_T_F=inversor_prestamista_deudor_T_F,
+            id_inversor_prestamista_deudor=id_inversor_prestamista_deudor,
+            tipo_cta=tipo_cta,
+            id_contrato=id_contrato
         )
 
         # Agregar el nuevo movimiento a la base de datos
         db.session.add(nueva_cuenta)
         db.session.commit()
 
-        return jsonify(nueva_cuenta.serialize()), 200
+        return redirect(url_for('show_account_form'))
     except Exception as e:
         print(f"\n[SERVER]: Error in route /api/addaccount. Log: {str(e)}\n")
         print(f"Request data: {request.form}")
         db.session.rollback()
         return jsonify({"msg": "Algo ha salido mal"}), 500
 
+#----Muestro el formulario para agregar contrato----#
+@app.route("/api/addcontract", methods=["GET"])
+def show_contract_form():    
+    opciones_contrato = sorted(Contrato.query.all(), key=lambda contrato: contrato.nombre_contrato)
+    opciones_inversor_prestamista_deudor = sorted(Inversor_prestamista_deudor.query.all(), key=lambda inversor_prestamista_deudor: inversor_prestamista_deudor.nombre_inversor_prestamista_deudor)
+    opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
+    opciones_proyecto = sorted(Proyecto.query.all(), key=lambda proyecto: proyecto.nombre_proyecto)
+    opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
+    
+    return render_template("addcontract.html",opciones_contrato=opciones_contrato, opciones_proyecto=opciones_proyecto, opciones_inversor_prestamista_deudor=opciones_inversor_prestamista_deudor, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa)
+
+#----Obtengo datos del formulario contrato----#
+@app.route("/api/addcontract", methods=["POST"])
+def add_contract():
+    try:
+        nombre_contrato = request.form["nombre_contrato"]
+        id_inversor_prestamista_deudor = request.form["id_inversor_prestamista_deudor"]
+        id_empresa = request.form["id_empresa"]
+        id_proyecto = request.form["id_proyecto"]
+        id_moneda = request.form["id_moneda"]
+        inversor_o_prestamista_o_deudor = request.form["inversor_o_prestamista_o_deudor"]
+        tasa_anual = request.form["tasa_anual"]
+        aplica_CAC_T_F = request.form.get("act_cac") == "on"  # True if checkbox is checked, False otherwise
+        monto_contrato = request.form["monto_contrato"]
+
+        
+        # Crear un nuevo objeto Cuentas
+        nuevo_contrato = Contrato(
+            nombre_contrato=nombre_contrato,
+            id_inversor_prestamista_deudor=id_inversor_prestamista_deudor,
+            id_empresa=id_empresa,
+            id_proyecto=id_proyecto,
+            id_moneda=id_moneda,
+            inversor_o_prestamista_o_deudor=inversor_o_prestamista_o_deudor,
+            tasa_anual=tasa_anual,
+            aplica_CAC_T_F=aplica_CAC_T_F,
+            monto_contrato=monto_contrato
+        )
+
+        # Agregar el nuevo movimiento a la base de datos
+        db.session.add(nuevo_contrato)
+        db.session.commit()
+
+        return redirect(url_for('show_contract_form'))
+    except Exception as e:
+        print(f"\n[SERVER]: Error in route /api/addcontract. Log: {str(e)}\n")
+        print(f"Request data: {request.form}")
+        db.session.rollback()
+        return jsonify({"msg": "Algo ha salido mal"}), 500
+
+
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.register_error_handler(404, pagina_no_encontrada)
     app.run(debug=True, port=4000)

@@ -15,14 +15,17 @@
     {% block content %}
         <h2>Listado de Cuentas</h2>
         <div class="styled-table-container">
-            <table id="tabla" class="display dataTable" class="styled-table">
+            <table id="tabla" class="display dataTable styled-table">
                 <thead>
                     <tr>
                         <th>Empresa</th>
                         <th>Concepto</th>
                         <th>Moneda</th>
                         <th>Nombre Cuenta</th>
-                        <th>Inversor</th>
+                        <th>Agente Financiero</th>
+                        <th>Nombre</th>
+                        <th>Tipo de Cuenta</th>
+                        <th>Contrato</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,7 +35,22 @@
                             <td>{{ cuenta.concepto.nombre_concepto }}</td>
                             <td>{{ cuenta.moneda.descr_moneda }}</td>
                             <td>{{ cuenta.nombre_cuenta }}</td>
-                            <td>{{ cuenta.inversor.nombre_inversor }}</td>
+                            <td>{{ cuenta.inversor_prestamista_deudor_T_F }}</td>
+                            <td>
+                                {% if cuenta.inversor_prestamista_deudor_T_F %}
+                                    {{ cuenta.inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if cuenta.inversor_prestamista_deudor_T_F %}
+                                    {{ cuenta.tipo_cta }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if cuenta.inversor_prestamista_deudor_T_F %}
+                                    {{ cuenta.contrato.nombre_contrato }}
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -79,37 +97,40 @@
             </div>  
 
             <div class="form-group">
-                <label for="inversor_T_F">Es Inversor:</label>
-                <input type="checkbox" id="inversor_T_F" name="inversor_T_F" onclick="toggleInversorField()">
+                <label for="inversor_prestamista_deudor_T_F">¿Es Agente financiero?</label>
+                <input type="checkbox" id="inversor_prestamista_deudor_T_F" name="inversor_prestamista_deudor_T_F" onclick="toggleInversorField()">
             </div>  
 
             <div class="form-group" id="inversorField" style="display: block;">
-                <label for="id_inversor">Inversor:</label>
-                <select id="id_inversor" name="id_inversor" required>
-                    {% for inversor in opciones_inversor %}
-                        <option value="{{ inversor.nombre_inversor }}">{{ inversor.nombre_inversor }}</option>
+                <label for="id_inversor_prestamista_deudor">Nombre:</label>
+                <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" required>
+                    {% for inversor_prestamista_deudor in opciones_inversor_prestamista_deudor %}
+                        <option value="{{ inversor_prestamista_deudor.id_inversor_prestamista_deudor }}">{{ inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</option>
                     {% endfor %}
                 </select> 
             </div>  
 
-            <div class="form-group">
-                <label for="tasa_T_F">¿Tiene tasa?:</label>
-                <input type="checkbox" id="tasa_T_F" name="tasa_T_F" onclick="toggleTasaField()">
+            <div class="form-group" id="tipoCtaField" style="display: block;">
+                <label for="tipo_cta">Tipo de cuenta:</label>
+                <select id="tipo_cta" name="tipo_cta" required>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                </select>
             </div>
             
-            <!-- <div class="form-group" id="tasaField" style="display: block;">
-                <label for="id_tasa">Tasa:</label>
-                <select id="id_tasa" name="id_tasa" required>
-                    {% for tasa in opciones_tasa %}
-                        <option value="{{ tasa.id_tasa }}">{{ tasa.tasa }}</option>
+            <div class="form-group" id="contratoField" style="display: block;">
+                <label for="id_contrato">Contrato:</label>
+                <select id="id_contrato" name="id_contrato" required>
+                    {% for contrato in opciones_contrato %}
+                        <option value="{{ contrato.id_contrato }}">{{ contrato.nombre_contrato }}</option>
                     {% endfor %}
-                </select> 
-            </div> -->
+                </select>
+            </div>
+            
             <input type="submit" value="Agregar Cuenta">
         </form>
 
         <script src="{{ url_for('static', filename='js/inversor_T_F.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/tasa_T_F.js') }}"></script>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
     {% endblock %}
     

@@ -1,13 +1,17 @@
 function toggleInversorField() {
-    var inversorCheckbox = document.getElementById('inversor_T_F');
+    var inversorCheckbox = document.getElementById('inversor_prestamista_deudor_T_F');
     var inversorField = document.getElementById('inversorField');
+    var tipoCtaField = document.getElementById('tipoCtaField');
+    var idContratoField = document.getElementById('contratoField');
 
     if (inversorCheckbox.checked) {
         inversorField.style.display = 'block';
-        document.getElementById('id_inversor').required = true;
+        tipoCtaField.style.display = 'block';
+        idContratoField.style.display = 'block';
     } else {
         inversorField.style.display = 'none';
-        document.getElementById('id_inversor').required = false;
+        tipoCtaField.style.display = 'none';
+        idContratoField.style.display = 'none';
     }
 }
 

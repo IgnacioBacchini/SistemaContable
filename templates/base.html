@@ -18,18 +18,25 @@
                     <a href="/api/addinvestor">Inversor</a>
                     <a href="/api/addcoin">Moneda</a>
                     <a href="/api/addconcept">Concepto</a>
-                    <a href="/api/addrate">Tasa</a>
+                    <a href="/api/addproyect">Proyecto</a>
+                    <a href="/api/addcontract">Contrato</a>
                     <a href="/api/addaccount">Cuenta</a>
                     <a href="/api/adduser">Usuario</a>
                     <a href="/api/addcac">Índice CAC</a>
                 </div>
             </div>
             <!-- Otras opciones de navegación aquí -->
-            <a href="/api/balances">Saldos</a>
-            <a href="/api/reports">Reportes</a>
+            <div class="config-option">
+                <a class="nav-link" href="#">Reportes</a>
+                <div class="dropdown-content">
+                    <a href="/api/inversor">Inversor</a>
+                    <a href="/api/saldo">Saldos</a>
+                    <a href="/api/caja">Caja</a>
+                </div>
+            </div>
+            <a href="/api/rent">Renta Espera</a>
         </nav>
     </header>
-    
 
     <div class="content">
         {% block content %}{% endblock %}
