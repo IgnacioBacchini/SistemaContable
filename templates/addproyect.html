@@ -7,13 +7,14 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Sistema Contable</title>
 </head>
 <body>
     {% extends 'base.html' %}
     
     {% block content %}
-        <h2>Listado de Proyectos</h2>
+    <h2 class="text-2xl font-medium text-black text-center">Listado de proyectos</h2>
         <div class="styled-table-container">
             <table id="tabla" class="display dataTable styled-table">
                 <thead>
@@ -33,7 +34,7 @@
             </table>
         </div>
 
-        <h3>Agregar Nuevo Proyecto</h3>
+        <h2 class="text-2xl font-medium text-black text-center">Agregar nuevo proyecto</h2>
         {% if error %}
             <div class="error-message">{{ error }}</div>
         {% endif %}
@@ -46,7 +47,7 @@
                 <label for="fecha">Fecha:</label>
                 <input type="date" id="fecha_fin_obra" name="fecha_fin_obra" required><br>
             </div>
-            <input type="submit" value="Agregar Proyecto">
+            <button type="submit" value="Agregar Proyecto" class="w-full text-white text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar proyecto</button>
         </form>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
 

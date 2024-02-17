@@ -13,11 +13,12 @@
     {% extends 'base.html' %}
 
     {% block content %}
-        <div class="bg-gradient-to-r from-neutral-700 via-neutral-600 to-neutral-700 mx-64 rounded-xl shadow-2xl shadow-white">
+        <div class="">
         
-        <h3 class="text-white text-2xl">Movimiento de Fondos - Nuevo</h3>
+            <h2 class="text-2xl font-medium text-black text-center">Movimiento de fondos - Nuevo</h2>    
+
         
-        <form class="text-white " action="/api/addmovement" method="post">
+        <form class="text-black" action="/api/addmovement" method="post">
             <div class="form-group">
                 <label for="fecha">Fecha:</label>
                 <input class="text-black" type="date" id="fecha" name="fecha" value="{{ fecha_actual }}" readonly><br>
@@ -105,8 +106,8 @@
                 <label for="descripcion">Descripción:</label>
                 <textarea id="descripcion" name="descripcion" rows="4" cols="50" maxlength="70" ></textarea><br>
             </div>
-                
-                <input type="submit" value="Añadir movimiento">
+            <button type="submit" value="Añadir movimiento" class="mt-4 w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Añadir Movimiento</button>
+
         </form>
     </div>
         <script>src="{{ url_for('static', filename='js/value.js') }}"</script>

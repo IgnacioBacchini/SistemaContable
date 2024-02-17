@@ -16,9 +16,9 @@
     {% extends 'base.html' %}
     
     {% block content %}
-    <div class="bg-gradient-to-r from-neutral-700 via-neutral-600 to-neutral-700 mx-64 rounded-xl shadow-2xl shadow-white">
+    <div>
 
-        <h2>Listado de Monedas</h2>
+        <h2 class="text-2xl font-medium text-black text-center">Listado de Monedas</h2>    
         <div class="styled-table-container">
             <table id="tabla" class="display dataTable styled-table">
                 <thead>
@@ -35,7 +35,7 @@
                 </tbody>
             </table>
         </div>
-        <h3>Agregar Nueva Moneda</h3>
+        <h2 class="text-2xl font-medium text-black text-center">Agregar nueva moneda</h2>    
         {% if error %}
             <div class="error-message">{{ error }}</div>
         {% endif %}
@@ -44,7 +44,7 @@
                 <label for="descr_moneda">Descripción Moneda:</label>
                 <input type="text" id="descr_moneda" name="descr_moneda" required>
             </div>
-            <input type="submit" value="Agregar Moneda">
+            <button type="submit" value="Agregar Moneda" class="w-full bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar Moneda</button>
         </form>
     </div>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>

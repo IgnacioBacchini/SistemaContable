@@ -8,12 +8,13 @@
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script src="{{ url_for('static', filename='js/inversor_T_F.js') }}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Sistema Contable</title>
 </head>
 <body>
     {% extends 'base.html' %}
     {% block content %}
-        <h2>Listado de Contratos</h2>
+    <h2 class="text-2xl font-medium text-black text-center">Contratos</h2>
         <div class="styled-table-container">
             <table id="tabla" class="display dataTable styled-table">
                 <thead>
@@ -46,7 +47,7 @@
                 </tbody>
             </table>
         </div>
-        <h3>Agregar Nuevo Contrato</h3>
+        <h2 class="text-2xl font-medium text-black text-center">Nuevo contrato</h2>
         {% if error %}
             <div class="error-message">{{ error }}</div>
         {% endif %}
@@ -119,7 +120,7 @@
                 <input type="text" id="monto_contrato" name="monto_contrato"  required pattern="\d+(\.\d{1,2})?" oninput="updateValueTo()"><br>
             </div>
             
-            <input type="submit" value="Agregar Contrato">
+            <button type="submit" value="Agregar Moneda" class="w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar contrato</button>
         </form>
 
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
