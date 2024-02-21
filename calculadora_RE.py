@@ -8,6 +8,9 @@ import pandas as pd
 
 # Configura la conexión a la base de datos
 engine = create_engine('sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\SistemaContable\\database\\SistemaPRU.db')
+#engine = create_engine('sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db')
+#engine = create_engine('sqlite:////home/sanchez/SistemaContable/database/SistemaPRU.db')
+
 Session = sessionmaker(bind=engine)
 
 def consultar_cuentas_inversores():

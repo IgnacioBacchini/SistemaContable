@@ -231,20 +231,15 @@ li:hover {
   background-color: #f5f5f5;
 }
 
-.dataTables_filter {
-  position: sticky;
-  padding: 10px; /* Ajusta el espacio interno según tu preferencia */
-}
-.dataTables_filter input {
-  /* Estilos para el cuadro de búsqueda */
-  border: 1px solid #ccc;
-  padding: 5px;
-  border-radius: 4px;
-}
-
 .styled-table td.number, .styled-table th.number {
   /* Formateamos los números para mostrar dos decimales */
   white-space: nowrap; /* Evitamos que los números se dividan en varias líneas */
+}
+.dataTables_filter {
+  position: sticky;
+  top: 0; /* Fija el cuadro de búsqueda en la parte superior */
+  z-index: 1; /* Asegura que esté por encima de la tabla */
+  padding: 10px; /* Ajusta el espacio interno según tu preferencia */
 }
 
 .align-right {

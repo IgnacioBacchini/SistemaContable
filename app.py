@@ -1,12 +1,13 @@
-from flask import Flask, jsonify, request, render_template, redirect, url_for, Response
+from flask import Flask, jsonify, request, render_template, redirect, url_for, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from logging import exception
 from datetime import date, datetime
+import os
 # Importa tus modelos SQLAlchemy
 from Models import *
 from tabla_caja import obtener_resultados_tabla_caja
-
+from crear_zip import crear_zip_en_memoria
 # Configuración de la aplicación Flask
 app = Flask(__name__)
 
@@ -91,7 +92,20 @@ def calcular_renta():
     else:
         # Aquí se muestra el formulario para ingresar los datos
         return render_template("rent.html")
+parent_directory = os.path.dirname(os.path.abspath(__file__))
 
+# Ruta para descargar el archivo ZIP
+@app.route('/download_zip')
+def download_csv():
+    # Crear el archivo ZIP en memoria
+    archivo_zip = crear_zip_en_memoria()
+
+    # Enviar el archivo ZIP como respuesta HTTP para su descarga
+    return send_file(
+        archivo_zip,
+        as_attachment=True,
+        download_name='Sistema_PRU.zip'
+    )
 
 #----Muestro el formulario para agregar CAC----#
 @app.route("/api/addcac")
