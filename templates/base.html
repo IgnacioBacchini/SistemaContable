@@ -13,7 +13,13 @@
         <h1 class="text-5xl text-black ">Sistema de gestión</h1>
     </div>
         <nav>
-            <a href="/api/addmovement">Movimiento de Fondos</a>
+            <div class="config-option">
+                <a class="nav-link" href="#">Movimiento de Fondos</a>
+                <div class="dropdown-content">
+                    <a href="/api/addmovement">Añadir Movimiento</a>
+                    <a href="/api/showmovement">Consultar Movimientos</a>
+                </div>
+            </div>
             <div class="config-option">
                 <a class="nav-link" href="#">Configuración</a>
                 <div class="dropdown-content ">
@@ -33,8 +39,8 @@
                 <a class="nav-link" href="#">Reportes</a>
                 <div class="dropdown-content">
                     <a href="/api/inversor">Inversor</a>
-                    <a href="/api/saldo">Saldos</a>
-                    <a href="/api/caja">Caja</a>
+                    <a href="/api/saldo">Gastos</a>
+                    <a href="/api/caja">Cajas</a>
                 </div>
             </div>
             <a href="/api/rent">Renta Espera</a>

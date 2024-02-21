@@ -1,17 +1,18 @@
-from flask import Flask, jsonify, request, render_template, redirect, url_for
+from flask import Flask, jsonify, request, render_template, redirect, url_for, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from logging import exception
 from datetime import date, datetime
 # Importa tus modelos SQLAlchemy
 from Models import *
+from tabla_caja import obtener_resultados_tabla_caja
 
 # Configuración de la aplicación Flask
 app = Flask(__name__)
 
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\SistemaContable\\database\\SistemaPRU.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\SistemaContable\\database\\SistemaPRU.db"
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable\\database\\SistemaPRU.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/sanchez/SistemaContable/database/SistemaPRU.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/sanchez/SistemaContable/database/SistemaPRU.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Corregido: "SQLALCHEMY_TRACK_MODIFICATIONES"
 db.init_app(app)
 
@@ -43,9 +44,19 @@ def show_inversor():
 def show_saldos():
     return render_template("saldo.html")
 
+@app.route("/api/showmovement")
+def show_movement():
+    movimientos = RelacionMovimientos.query.all()
+    # Renderiza los resultados en una plantilla HTML
+    return render_template('showmovement.html', movimientos=movimientos)
+
+
 @app.route("/api/caja")
 def show_caja():
-    return render_template("caja.html")
+    # Llama a la función para obtener los resultados de las tres consultas
+    datos_peso, datos_euro, datos_dolar = obtener_resultados_tabla_caja()
+    # Renderiza los resultados en una plantilla HTML
+    return render_template('caja.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -80,6 +91,7 @@ def calcular_renta():
     else:
         # Aquí se muestra el formulario para ingresar los datos
         return render_template("rent.html")
+
 
 #----Muestro el formulario para agregar CAC----#
 @app.route("/api/addcac")

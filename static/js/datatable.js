@@ -1,6 +1,7 @@
 $(document).ready(function () {
-    $('#tabla').DataTable({
+    $('.dataTable').DataTable({
         "language": {
+            "emptyTable": "No hay datos disponibles en la tabla",
             "search": "Buscar ",
             "lengthMenu": "Filas a mostrar: _MENU_",
             "paginate": {
