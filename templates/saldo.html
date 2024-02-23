@@ -4,15 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <title>Sistema Contable</title>
+
 </head>
 <body>
     {% extends 'base.html' %}
     
     {% block content %}
-        <h3>Pantalla Saldos</h3> 
+        <div class="styled-table-container">
+            <div class="tabla-container" style="width: 100%">
+                <h2 class="text-2xl font-medium text-black text-center">Pesos</h2>
+                <table id="tabla-peso" class="display dataTable styled-table ">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cuenta</th>
+                            <th>Empresa</th>
+                            <th>Moneda</th>
+                            <th class="align-right">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cuenta in datos_peso %}
+                            <tr>
+                                <td>{{ cuenta.id_cuenta }}</td>
+                                <td>{{ cuenta.nombre_cuenta }}</td>
+                                <td>{{ cuenta.nombre_empresa }}</td>
+                                <td>{{ cuenta.descr_moneda }}</td>
+                                <td class="align-right">{{ cuenta.diferencia }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tabla-container" style="width: 100%">
+                <h2 class="text-2xl font-medium text-black text-center">Dolares</h2>
+                <table id="tabla-dolar" class="display dataTable styled-table">
+                    <thead>
+                        <tr>
+                            <th>Cuenta</th>
+                            <th>Cuenta</th>
+                            <th>Empresa</th>
+                            <th>Moneda</th>
+                            <th class="align-right">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cuenta in datos_dolar %}
+                            <tr>
+                                <td>{{ cuenta.id_cuenta }}</td>
+                                <td>{{ cuenta.nombre_cuenta }}</td>
+                                <td>{{ cuenta.nombre_empresa }}</td>
+                                <td>{{ cuenta.descr_moneda }}</td>
+                                <td class="align-right">{{ cuenta.diferencia }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tabla-container" style="width: 100%;">
+                <h2 class="text-2xl font-medium text-black text-center">Euros</h2>
+                <table id="tabla-euro" class="display dataTable styled-table">
+                    <thead>
+                        <tr>
+                            <th>Cuenta</th>
+                            <th>Cuenta</th>
+                            <th>Empresa</th>
+                            <th>Moneda</th>
+                            <th class="align-right">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cuenta in datos_euro %}
+                            <tr>
+                                <td>{{ cuenta.id_cuenta }}</td>
+                                <td>{{ cuenta.nombre_cuenta }}</td>
+                                <td>{{ cuenta.nombre_empresa }}</td>
+                                <td>{{ cuenta.descr_moneda }}</td>
+                                <td class="align-right">{{ cuenta.diferencia }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
     {% endblock %}
-    
-
 </body>
 </html>

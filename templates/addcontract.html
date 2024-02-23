@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modal.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
@@ -54,51 +55,52 @@
         {% if mensaje_alerta %}
             <div class="error-message">{{ mensaje_alerta }}</div>
         {% endif %}
-        <form action="/api/addcontract" method="post">
+        <form id="contrato" action="/api/addcontract" method="post">
             <div class="form-group">
                 <label for="nombre_contrato">Nombre del Contrato:</label>
-                <input type="text" id="nombre_contrato" name="nombre_contrato" required>
+                <input type="text" id="nombre_contrato" name="nombre_contrato" required
+                    data-label="Nombre Contrato">
             </div>
 
             <div class="form-group">
-                <label for="nombre_inversor_prestamista_deudor">Inversor:</label>
-                <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" required>
+                <label for="nombre_inversor_prestamista_deudor"  >Agente:</label>
+                <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" data-label="Agente Financiero" required>
                     {% for inversor_prestamista_deudor in opciones_inversor_prestamista_deudor %}
-                        <option value="{{ inversor_prestamista_deudor.id_inversor_prestamista_deudor }}">{{ inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</option>
+                        <option value="{{ inversor_prestamista_deudor.id_inversor_prestamista_deudor }}" >{{ inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</option>
                     {% endfor %}
                 </select>
             </div>  
 
             <div class="form-group">
                 <label for="nombre_empresa">Empresa:</label>
-                <select id="id_empresa" name="id_empresa" required>
+                <select id="id_empresa" name="id_empresa" data-label="Empresa" required>
                     {% for empresa in opciones_empresa %}
-                        <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
+                        <option value="{{ empresa.id_empresa }}" >{{ empresa.nombre_empresa }}</option>
                     {% endfor %}
                 </select>
             </div>  
 
             <div class="form-group">
                 <label for="nombre_proyecto">Proyecto:</label>
-                <select id="id_proyecto" name="id_proyecto" required>
+                <select id="id_proyecto" name="id_proyecto" data-label="Proyecto" required>
                     {% for proyecto in opciones_proyecto %}
-                        <option value="{{ proyecto.id_proyecto }}">{{ proyecto.nombre_proyecto }}</option>
+                        <option value="{{ proyecto.id_proyecto }}" >{{ proyecto.nombre_proyecto }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="descr_moneda">Moneda:</label>
-                <select id="id_moneda" name="id_moneda" required>
+                <select id="id_moneda" name="id_moneda" data-label="Moneda" required>
                     {% for moneda in opciones_moneda %}
-                        <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
+                        <option value="{{ moneda.id_moneda }}" >{{ moneda.descr_moneda }}</option>
                     {% endfor %}
                 </select>
             </div>  
 
             <div class="form-group">
-                <label for="inversor_o_prestamista_o_deudor">Tipo:</label>
-                <select id="inversor_o_prestamista_o_deudor" name="inversor_o_prestamista_o_deudor" onchange="toggleTasaField()">
+                <label for="inversor_o_prestamista_o_deudor" >Rol:</label>
+                <select id="inversor_o_prestamista_o_deudor" name="inversor_o_prestamista_o_deudor" data-label="Rol" onchange="toggleTasaField()">
                     <option value="Deudor">Deudor</option>
                     <option value="Prestamista">Prestamista</option>
                     <option value="Inversor">Inversor</option>
@@ -107,22 +109,33 @@
 
             <div class="form-group">
                 <label for="tasa_anual">Tasa Anual:</label>
-                <input type="number" id="tasa_anual" name="tasa_anual" step="0.01" min="0" max="1.00" required><br>
+                <input type="number" data-label="Tasa Anual" id="tasa_anual" name="tasa_anual" step="0.01" min="0" max="1.00" required><br>
             </div>
 
             <div class="form-group">
                 <label for="act_cac">¿Actualiza por CAC?:</label>
-                <input type="checkbox" id="act_cac" name="act_cac" >
+                <input data-label="Actualiza por Cac" type="checkbox" id="act_cac" name="act_cac" >
             </div>
 
             <div class="form-group">
                 <label for="monto_contrato">Monto Contrato:</label>
-                <input type="text" id="monto_contrato" name="monto_contrato"  required pattern="\d+(\.\d{1,2})?" oninput="updateValueTo()"><br>
+                <input data-label="Monto" type="number" id="monto_contrato" name="monto_contrato"  required pattern="\d+(\.\d{1,2})?" oninput="updateValueTo()"><br>
             </div>
             
-            <button type="submit" value="Agregar Moneda" class="w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar contrato</button>
+            <button type="submit" data-form-id="contrato" value="Agregar Moneda" class="w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar contrato</button>
         </form>
-
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>¿Está seguro que desea agregar el siguiente contrato?</p>
+                <p id="modal-content"></p>
+                <button id="confirmar">Confirmar</button>
+                <div id="mensaje-exito" style="display: none;">
+                    Se agregó exitosamente.
+                </div>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='js/confirm_form.js') }}"></script>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
     {% endblock %}
     

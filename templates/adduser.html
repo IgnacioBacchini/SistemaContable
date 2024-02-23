@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modal.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
@@ -38,21 +39,33 @@
         {% if error %}
             <div class="error-message">{{ error }}</div>
         {% endif %}
-        <form action="/api/adduser" method="post">
+        <form id="usuario" action="/api/adduser" method="post">
             <div class="form-group">
                 <label for="nombre_usuario">Nombre del Usuario:</label>
-                <input type="text" id="nombre_usuario" name="nombre_usuario" required>
+                <input data-label="Nombre" type="text" id="nombre_usuario" name="nombre_usuario" required>
             </div>
             <div class="form-group">
                 <label for="mail_usuario">Mail del Usuario:</label>
-                <input type="text" id="mail_usuario" name="mail_usuario" required>
+                <input data-label="Mail" type="text" id="mail_usuario" name="mail_usuario" required>
             </div>
             <div class="form-group">
                 <label for="contrasenia_usuario">Clave del Usuario:</label>
-                <input type="text" id="contrasenia_usuario" name="contrasenia_usuario" required>
+                <input data-label="Contraseña" type="text" id="contrasenia_usuario" name="contrasenia_usuario" required>
             </div>
-            <button type="submit" value="Agregar Ususario" class="w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar usuario</button>
+            <button type="submit" data-form-id="usuario" value="Agregar Ususario" class="w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar usuario</button>
         </form>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>¿Está seguro que desea agregar el siguiente usuario?</p>
+                <p id="modal-content"></p>
+                <button id="confirmar">Confirmar</button>
+                <div id="mensaje-exito" style="display: none;">
+                    Se agregó exitosamente.
+                </div>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='js/confirm_form.js') }}"></script>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
 
     {% endblock %}

@@ -4,69 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modal.css') }}">
     <script src="{{ url_for('static', filename='js/account_concept.js') }}"></script>
     <script src="{{ url_for('static', filename='js/value.js') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Sistema Contable</title>
 </head>
-    <style>
-        /* Estilos para el modal */
-        .modal {
-            display: none; /* Por defecto oculto */
-            position: fixed; /* Se mantiene en la misma posición en la página */
-            z-index: 1; /* Sobre el resto de contenido */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* Hace que el contenido del modal sea desplazable si es necesario */
-            background-color: rgba(0,0,0,0.4); /* Fondo oscuro semi-transparente */
-        }
-
-        /* Contenido del modal */
-        .modal-content {
-            background-color: #fefefe;
-            margin: 20% auto; /* Centrar verticalmente el modal */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Ancho del modal */
-            max-width: 600px; /* Máximo ancho del modal */
-            border-radius: 8px; /* Bordes redondeados */
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Sombra */
-            position: relative;
-        }
-
-        /* Botón para cerrar el modal */
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* Botón confirmar */
-        #confirmar {
-            background-color: #5D6D7E;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-            float: right;
-        }
-
-        #confirmar:hover {
-            background-color: #2a283d;
-        }
-    </style>
+    
 <body>
     {% extends 'base.html' %}
 
@@ -76,15 +20,15 @@
             <h2 class="text-2xl font-medium text-black text-center">Movimiento de fondos - Nuevo</h2>    
 
         
-        <form class="text-black" action="/api/addmovement" method="post">
+        <form id="movimiento" class="text-black" action="/api/addmovement" method="post">
             <div class="form-group">
                 <label for="fecha">Fecha:</label>
-                <input class="text-black" type="date" id="fecha" name="fecha" value="{{ fecha_actual }}" readonly><br>
+                <input data-label="Fecha"class="text-black" type="date" id="fecha" name="fecha" value="{{ fecha_actual }}" readonly><br>
             </div>
 
             <div class="form-group">
                 <label  for="id_empresa">Empresa:</label>
-                <select class="text-black" id="id_empresa" name="id_empresa" required>
+                <select class="text-black" id="id_empresa" name="id_empresa" data-label="Empresa"required>
                     {% for empresa in opciones_empresa %}
                         <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
                     {% endfor %}
@@ -93,12 +37,12 @@
 
             <div class="form-group">
                 <label for="tipo_de_cambio">Tipo de cambio:</label>
-                <input class="text-black"  type="text" id="tipo_de_cambio" name="tipo_de_cambio"  required pattern="\d+\.?\d*"><br>
+                <input data-label="Tipo de Cambio" class="text-black"  type="number" id="tipo_de_cambio" name="tipo_de_cambio"  required pattern="\d+\.?\d*"><br>
             </div>
 
             <div class="form-group">
                 <label for="id_moneda_desde">Moneda desde:</label>
-                <select class="text-black" id="id_moneda_desde" name="id_moneda_desde" required>
+                <select class="text-black" id="id_moneda_desde" name="id_moneda_desde" data-label="Moneda"required>
                     {% for moneda in opciones_moneda %}
                         <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
                     {% endfor %}
@@ -107,7 +51,7 @@
 
             <div class="form-group">
                 <label for="id_concepto_desde">Concepto desde:</label>
-                <select class="text-black" id="id_concepto_desde" name="id_concepto_desde" required>
+                <select class="text-black" id="id_concepto_desde" name="id_concepto_desde" data-label="Concepto Desde"required>
                     {% for concepto in opciones_concepto %}
                     <option value="{{ concepto.id_concepto }}" data-cuentas="{{ concepto.cuentas }}">{{ concepto.nombre_concepto }}</option>
                     {% endfor %}
@@ -116,7 +60,7 @@
 
             <div class="form-group">
                 <label for="id_cuenta_desde">Cuenta desde:</label>
-                <select class="text-black" id="id_cuenta_desde" name="id_cuenta_desde" required>
+                <select class="text-black" id="id_cuenta_desde" name="id_cuenta_desde" data-label="Cuenta Desde"required>
                     {% for cuenta in opciones_cuenta %}
                         <option value="{{ cuenta.id_cuenta }}">{{ cuenta.nombre_cuenta }}</option>
                     {% endfor %}
@@ -125,7 +69,7 @@
 
             <div class="form-group">
                 <label for="id_moneda_hacia">Moneda hacia:</label>
-                <select class="text-black" id="id_moneda_hacia" name="id_moneda_hacia" required>
+                <select class="text-black" id="id_moneda_hacia" name="id_moneda_hacia" data-label="Moneda Hacia"required>
                     {% for moneda in opciones_moneda %}
                         <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
                     {% endfor %}
@@ -134,7 +78,7 @@
 
             <div class="form-group">
                 <label for="id_concepto_hacia">Concepto hacia:</label>
-                <select class="text-black" id="id_concepto_hacia" name="id_concepto_hacia" required>
+                <select class="text-black" id="id_concepto_hacia" name="id_concepto_hacia" data-label="Concepto Hacia"required>
                     {% for concepto in opciones_concepto %}
                         <option value="{{ concepto.id_concepto }}" data-cuentas="{{ concepto.cuentas }}">{{ concepto.nombre_concepto }}</option>
                     {% endfor %}
@@ -143,7 +87,7 @@
 
             <div class="form-group">
                 <label for="id_cuenta_hacia">Cuenta hacia:</label>
-                <select class="text-black" id="id_cuenta_hacia" name="id_cuenta_hacia" required>
+                <select class="text-black" id="id_cuenta_hacia" name="id_cuenta_hacia" data-label="Cuenta Hacia"required>
                     {% for cuenta in opciones_cuenta %}
                         <option value="{{ cuenta.id_cuenta }}">{{ cuenta.nombre_cuenta }}</option>
                     {% endfor %}
@@ -152,19 +96,19 @@
 
             <div class="form-group">
                 <label for="valor_desde">Valor Desde:</label>
-                <input class="text-black" type="text" id="valor_desde" name="valor_desde"  required pattern="\d+(\.\d{1,2})?" oninput="updateValueTo()"><br>
+                <input data-label="Valor Desde"class="text-black" type="number" id="valor_desde" name="valor_desde"  required pattern="\d+(\.\d{1,2})?" oninput="updateValueTo()"><br>
             </div>
 
             <div class="form-group">
                 <label for="valor_hacia_calculado">Valor Hacia:</label>
-                <input class="text-black" type="text" id="valor_hacia_calculado" name="valor_hacia_calculado" readonly><br>    
+                <input data-label="Valor Hacia" class="text-black" type="number" id="valor_hacia_calculado" name="valor_hacia_calculado" readonly><br>    
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" rows="4" cols="50" maxlength="70" ></textarea><br>
+                <textarea data-label="Descripción" id="descripcion" name="descripcion" rows="4" cols="50" maxlength="70" ></textarea><br>
             </div>
-            <button type="submit" value="Añadir movimiento" class="mt-4 w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Añadir Movimiento</button>
+            <button type="submit" data-form-id="movimiento" value="Añadir movimiento" class="mt-4 w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Añadir Movimiento</button>
 
         </form>
     </div>
@@ -174,69 +118,18 @@
             <p>¿Está seguro que desea realizar el siguiente movimiento?</p>
             <p id="modal-content"></p>
             <button id="confirmar">Confirmar</button>
+            <div id="mensaje-exito" style="display: none;">
+                Se agregó exitosamente.
+            </div>
         </div>
     </div>
-    <script>src="{{ url_for('static', filename='js/value.js') }}"</script>
+    <script src="{{ url_for('static', filename='js/confirm_form.js') }}"></script>
+    
+    <script src="{{ url_for('static', filename='js/value.js') }}"></script>
 
-    <script>src="{{ url_for('static', filename='js/account_concept.js') }}"</script>
+    <script src="{{ url_for('static', filename='js/account_concept.js') }}"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('modal');
-        const btn = document.querySelector('button[type="submit"]');
-        const closeBtn = document.getElementsByClassName('close')[0];
-        const confirmBtn = document.getElementById('confirmar');
     
-        btn.onclick = function (e) {
-            e.preventDefault();
-            modal.style.display = 'block';
-    
-            // Obtener todos los campos del formulario
-            const fecha = document.getElementById('fecha').value;
-        const empresa = document.getElementById('id_empresa').options[document.getElementById('id_empresa').selectedIndex].text;
-        const tipoCambio = document.getElementById('tipo_de_cambio').value;
-        const monedaDesde = document.getElementById('id_moneda_desde').options[document.getElementById('id_moneda_desde').selectedIndex].text;
-        const conceptoDesde = document.getElementById('id_concepto_desde').options[document.getElementById('id_concepto_desde').selectedIndex].text;
-        const cuentaDesde = document.getElementById('id_cuenta_desde').options[document.getElementById('id_cuenta_desde').selectedIndex].text;
-        const monedaHacia = document.getElementById('id_moneda_hacia').options[document.getElementById('id_moneda_hacia').selectedIndex].text;
-        const conceptoHacia = document.getElementById('id_concepto_hacia').options[document.getElementById('id_concepto_hacia').selectedIndex].text;
-        const cuentaHacia = document.getElementById('id_cuenta_hacia').options[document.getElementById('id_cuenta_hacia').selectedIndex].text;
-        const valorDesde = document.getElementById('valor_desde').value;
-        const descripcion = document.getElementById('descripcion').value;
-    
-            // Mostrar los valores en el modal
-            const modalContent = document.getElementById('modal-content');
-            modalContent.innerHTML = `
-            <strong>Fecha:</strong> ${fecha}<br>
-            <strong>Empresa:</strong> ${empresa}<br>
-            <strong>Tipo de Cambio:</strong> ${tipoCambio}<br>
-            <strong>Moneda Desde:</strong> ${monedaDesde}<br>
-            <strong>Concepto Desde:</strong> ${conceptoDesde}<br>
-            <strong>Cuenta Desde:</strong> ${cuentaDesde}<br>
-            <strong>Moneda Hacia:</strong> ${monedaHacia}<br>
-            <strong>Concepto Hacia:</strong> ${conceptoHacia}<br>
-            <strong>Cuenta Hacia:</strong> ${cuentaHacia}<br>
-            <strong>Valor Desde:</strong> ${valorDesde}<br>
-            <strong>Descripción:</strong> ${descripcion}<br>
-            `;
-    
-            // Si el usuario confirma, envía el formulario
-            confirmBtn.onclick = function () {
-            document.querySelector('form').submit();
-            }
-        }
-    
-        closeBtn.onclick = function () {
-            modal.style.display = 'none';
-        }
-    
-        window.onclick = function (event) {
-            if (event.target == modal) {
-            modal.style.display = 'none';
-            }
-        }
-        });
-    </script>
     
     {% endblock %}
     

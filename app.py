@@ -6,7 +6,7 @@ from datetime import date, datetime
 import os
 # Importa tus modelos SQLAlchemy
 from Models import *
-from tabla_caja import obtener_resultados_tabla_caja
+from tabla_caja import obtener_reportes
 from crear_zip import crear_zip_en_memoria
 # Configuración de la aplicación Flask
 app = Flask(__name__)
@@ -39,11 +39,21 @@ def show_main():
 
 @app.route("/api/inversor")
 def show_inversor():
-    return render_template("inversor.html")
+    #Conceptos a filtrar
+    conceptos = [10,11,15,17]
+    # Llama a la función para obtener los resultados de las tres consultas
+    datos_peso, datos_euro, datos_dolar = obtener_reportes(conceptos)
+    # Renderiza los resultados en una plantilla HTML
+    return render_template('inversor.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
 @app.route("/api/saldo")
 def show_saldos():
-    return render_template("saldo.html")
+    #Conceptos a filtrar
+    conceptos = [2,3,4,5,6,7,8,9,12,13,14,18]
+    # Llama a la función para obtener los resultados de las tres consultas
+    datos_peso, datos_euro, datos_dolar = obtener_reportes(conceptos)
+    # Renderiza los resultados en una plantilla HTML
+    return render_template('saldo.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
 @app.route("/api/showmovement")
 def show_movement():
@@ -51,11 +61,12 @@ def show_movement():
     # Renderiza los resultados en una plantilla HTML
     return render_template('showmovement.html', movimientos=movimientos)
 
-
 @app.route("/api/caja")
 def show_caja():
+    #Conceptos a filtrar
+    conceptos = [1]
     # Llama a la función para obtener los resultados de las tres consultas
-    datos_peso, datos_euro, datos_dolar = obtener_resultados_tabla_caja()
+    datos_peso, datos_euro, datos_dolar = obtener_reportes(conceptos)
     # Renderiza los resultados en una plantilla HTML
     return render_template('caja.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
@@ -265,10 +276,10 @@ def add_company():
     try:
         nombre_empresa = request.form["nombre_empresa"]
 
-        # Verificar si la empresa ya existe
-        if Empresa.query.filter_by(nombre_empresa=nombre_empresa).first():
-            error = "La empresa ya existe"
-            return render_template("addcompany.html", empresas=Empresa.query.all(), error=error)        
+        # # Verificar si la empresa ya existe
+        # if Empresa.query.filter_by(nombre_empresa=nombre_empresa).first():
+        #     error = "La empresa ya existe"
+        #     return render_template("addcompany.html", empresas=Empresa.query.all(), error=error)        
         
         # Crear un nuevo objeto Empresa
         nueva_empresa = Empresa(nombre_empresa=nombre_empresa)
@@ -299,10 +310,10 @@ def add_investor():
         nombre_inversor_prestamista_deudor = request.form["nombre_inversor_prestamista_deudor"]
         inversor_o_prestamista_o_deudor = request.form["inversor_o_prestamista_o_deudor"]
         
-        # Verificar si el inversor_prestamista_deudor ya existe
-        if Inversor_prestamista_deudor.query.filter_by(nombre_inversor_prestamista_deudor=nombre_inversor_prestamista_deudor).first():
-            error = "El inversor_prestamista_deudor ya existe"
-            return render_template("addinvestor.html", inversor_prestamista_deudor=Inversor_prestamista_deudor.query.all(), error=error)        
+        # # Verificar si el inversor_prestamista_deudor ya existe
+        # if Inversor_prestamista_deudor.query.filter_by(nombre_inversor_prestamista_deudor=nombre_inversor_prestamista_deudor).first():
+        #     error = "El inversor_prestamista_deudor ya existe"
+        #     return render_template("addinvestor.html", inversor_prestamista_deudor=Inversor_prestamista_deudor.query.all(), error=error)        
         
         # Crear un nuevo objeto inversor_prestamista_deudor
         nuevo_inversor_prestamista_deudor = Inversor_prestamista_deudor(
@@ -335,10 +346,10 @@ def add_proyect():
         fecha_fin_obra = datetime.strptime(fecha_fin_obra_str, "%Y-%m-%d")
 
     
-        # Verificar si el proyecto ya existe
-        if Proyecto.query.filter_by(nombre_proyecto=nombre_proyecto).first():
-            error = "El proyecto ya existe"
-            return render_template("addproyect.html", nombre_proyecto=Proyecto.query.all(), error=error)        
+        # # Verificar si el proyecto ya existe
+        # if Proyecto.query.filter_by(nombre_proyecto=nombre_proyecto).first():
+        #     error = "El proyecto ya existe"
+        #     return render_template("addproyect.html", nombre_proyecto=Proyecto.query.all(), error=error)        
         
         # Crear un nuevo objeto proyecto
         nuevo_proyecto = Proyecto(
@@ -368,10 +379,10 @@ def add_coin():
     try:
         descr_moneda = request.form["descr_moneda"]
 
-        # Verificar si la moneda ya existe
-        if Moneda.query.filter_by(descr_moneda=descr_moneda).first():
-            error = "La Moneda ya existe"
-            return render_template("addcoin.html", monedas=Moneda.query.all(), error=error)        
+        # # Verificar si la moneda ya existe
+        # if Moneda.query.filter_by(descr_moneda=descr_moneda).first():
+        #     error = "La Moneda ya existe"
+        #     return render_template("addcoin.html", monedas=Moneda.query.all(), error=error)        
         
         # Crear un nuevo objeto Moneda
         nueva_moneda = Moneda(descr_moneda=descr_moneda)
@@ -398,10 +409,10 @@ def add_concept():
     try:
         nombre_concepto = request.form["nombre_concepto"]
 
-        # Verificar si el concepto ya existe
-        if Concepto.query.filter_by(nombre_concepto=nombre_concepto).first():
-            error = "El concepto ya existe"
-            return render_template("addconcept.html", conceptos=Concepto.query.all(), error=error)        
+        # # Verificar si el concepto ya existe
+        # if Concepto.query.filter_by(nombre_concepto=nombre_concepto).first():
+        #     error = "El concepto ya existe"
+        #     return render_template("addconcept.html", conceptos=Concepto.query.all(), error=error)        
         
         # Crear un nuevo objeto Concepto
         nuevo_concepto = Concepto(nombre_concepto=nombre_concepto)
@@ -429,10 +440,10 @@ def add_user():
         mail_usuario = request.form["mail_usuario"]
         contrasenia_usuario = request.form["contrasenia_usuario"]
 
-        # Verificar si el usuario ya existe
-        if Usuario.query.filter_by(nombre_usuario=nombre_usuario).first():
-            error = "El usuario ya existe"
-            return render_template("adduser.html", usuarios=Usuario.query.all(), error=error)        
+        # # Verificar si el usuario ya existe
+        # if Usuario.query.filter_by(nombre_usuario=nombre_usuario).first():
+        #     error = "El usuario ya existe"
+        #     return render_template("adduser.html", usuarios=Usuario.query.all(), error=error)        
         
         # Crear un nuevo objeto Usuario
         nuevo_usuario = Usuario(

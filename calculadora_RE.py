@@ -281,9 +281,15 @@ def calcular_rentas(resultados_integrados):
             else:
                 renta = 0
         elif inversor_prestamista_o_deudor == "Prestamista":
-            renta = (sum_desde_ultimo - sum_hacia_ultimo) * ((1 + tasa_anual) ** (1/12) - 1)
+            if sum_desde_ultimo - sum_hacia_ultimo <= sum_desde_primero - sum_hacia_primero:
+                renta = (sum_desde_ultimo - sum_hacia_ultimo) * ((1 + tasa_anual) ** (1/12) - 1)
+            else:
+                renta = (sum_desde_primero - sum_hacia_primero) * ((1 + tasa_anual) ** (1/12) - 1)
         elif inversor_prestamista_o_deudor == "Deudor":
-            renta = (sum_hacia_ultimo - sum_desde_ultimo) * ((1 + tasa_anual) ** (1/12) - 1)
+            if sum_hacia_ultimo - sum_desde_ultimo <= sum_hacia_primero - sum_desde_primero:
+                renta = (sum_hacia_ultimo - sum_desde_ultimo) * ((1 + tasa_anual) ** (1/12) - 1)
+            else:
+                renta = (sum_hacia_primero - sum_desde_primero) * ((1 + tasa_anual) ** (1/12) - 1)
         else:
             renta = None
 
