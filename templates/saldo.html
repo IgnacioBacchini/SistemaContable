@@ -21,6 +21,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Concepto</th>
                             <th>Cuenta</th>
                             <th>Empresa</th>
                             <th>Moneda</th>
@@ -31,6 +32,7 @@
                         {% for cuenta in datos_peso %}
                             <tr>
                                 <td>{{ cuenta.id_cuenta }}</td>
+                                <td>{{ cuenta.nombre_concepto }}</td>
                                 <td>{{ cuenta.nombre_cuenta }}</td>
                                 <td>{{ cuenta.nombre_empresa }}</td>
                                 <td>{{ cuenta.descr_moneda }}</td>
@@ -45,7 +47,8 @@
                 <table id="tabla-dolar" class="display dataTable styled-table">
                     <thead>
                         <tr>
-                            <th>Cuenta</th>
+                            <th>ID</th>
+                            <th>Concepto</th>
                             <th>Cuenta</th>
                             <th>Empresa</th>
                             <th>Moneda</th>
@@ -56,6 +59,7 @@
                         {% for cuenta in datos_dolar %}
                             <tr>
                                 <td>{{ cuenta.id_cuenta }}</td>
+                                <td>{{ cuenta.nombre_concepto }}</td>
                                 <td>{{ cuenta.nombre_cuenta }}</td>
                                 <td>{{ cuenta.nombre_empresa }}</td>
                                 <td>{{ cuenta.descr_moneda }}</td>
@@ -70,7 +74,8 @@
                 <table id="tabla-euro" class="display dataTable styled-table">
                     <thead>
                         <tr>
-                            <th>Cuenta</th>
+                            <th>ID</th>
+                            <th>Concepto</th>
                             <th>Cuenta</th>
                             <th>Empresa</th>
                             <th>Moneda</th>
@@ -81,6 +86,7 @@
                         {% for cuenta in datos_euro %}
                             <tr>
                                 <td>{{ cuenta.id_cuenta }}</td>
+                                <td>{{ cuenta.nombre_concepto }}</td>
                                 <td>{{ cuenta.nombre_cuenta }}</td>
                                 <td>{{ cuenta.nombre_empresa }}</td>
                                 <td>{{ cuenta.descr_moneda }}</td>

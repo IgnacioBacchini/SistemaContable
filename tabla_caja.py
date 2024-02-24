@@ -9,6 +9,8 @@ from Models import *
 def obtener_reportes(conceptos):
     consulta_original = db.session.query(
         Cuentas.id_cuenta,
+        Cuentas.id_concepto,
+        Concepto.nombre_concepto,
         Cuentas.id_empresa,
         Empresa.nombre_empresa,
         Cuentas.id_moneda,
@@ -20,6 +22,8 @@ def obtener_reportes(conceptos):
         Empresa, Cuentas.id_empresa == Empresa.id_empresa
     ).join(
         Moneda, Cuentas.id_moneda == Moneda.id_moneda
+    ).join(
+        Concepto, Cuentas.id_concepto == Concepto.id_concepto  # Unir con la tabla de conceptos
     ).all()
 
     tabla_suma_desde = db.session.query(
@@ -41,7 +45,7 @@ def obtener_reportes(conceptos):
     ).all()
 
     df_consulta_original = pd.DataFrame(consulta_original, columns=[
-        'id_cuenta', 'id_empresa', 'nombre_empresa', 'id_moneda', 'descr_moneda', 'nombre_cuenta'
+        'id_cuenta', 'id_concepto','nombre_concepto','id_empresa', 'nombre_empresa', 'id_moneda', 'descr_moneda', 'nombre_cuenta'
     ])
 
     df_tabla_suma_desde = pd.DataFrame(tabla_suma_desde, columns=['id_cuenta_desde', 'total_valor_desde'])
