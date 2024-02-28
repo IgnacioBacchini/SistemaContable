@@ -109,7 +109,17 @@
                     data-label="Agente Financiero">
             </div>  
 
-            <div class="form-group" id="inversorField" style="display: block;">
+            <div class="form-group" id="rolField" >
+                <label for="rol_financiero">Rol:</label>
+                <select id="rol_financiero" name="rol_financiero" required
+                    data-label="Rol Financiero">
+                    <option value="Deudor" data-label="Rol Financiero">Deudor</option>
+                    <option value="Inversor" data-label="Rol Financiero">Inversor</option>
+                    <option value="Prestamista" data-label="Rol Financiero">Prestamista</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="inversorField" >
                 <label for="id_inversor_prestamista_deudor">Nombre:</label>
                 <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" required
                     data-label="Nombre del Inversor">
@@ -119,7 +129,7 @@
                 </select> 
             </div>  
 
-            <div class="form-group" id="tipoCtaField" style="display: block;">
+            <div class="form-group" id="tipoCtaField" >
                 <label for="tipo_cta">Tipo de cuenta:</label>
                 <select id="tipo_cta" name="tipo_cta" required
                     data-label="Tipo de Cuenta">
@@ -128,7 +138,7 @@
                 </select>
             </div>
             
-            <div class="form-group" id="contratoField" style="display: block;">
+            <div class="form-group" id="contratoField" >
                 <label for="id_contrato">Contrato:</label>
                 <select id="id_contrato" name="id_contrato" required
                     data-label="Contrato">

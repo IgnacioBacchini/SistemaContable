@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+
 from flask import Flask
 
 db = SQLAlchemy()
@@ -23,11 +25,15 @@ class Moneda(db.Model):
             'descr_moneda': self.descr_moneda
         }
 
-class Usuario(db.Model):
+class Usuario(db.Model, UserMixin):
     id_usuario = db.Column(db.Integer, unique=True, primary_key=True)
     nombre_usuario = db.Column(db.Text)
     mail_usuario = db.Column(db.Text)
     contrasenia_usuario = db.Column(db.Text)
+    
+    def get_id(self):
+        return str(self.id)
+    
     def serialize(self):
         return {
             'id_usuario': self.id_usuario,

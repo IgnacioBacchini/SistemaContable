@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Ocultar el mensaje después de unos segundos (opcional)
         setTimeout(function () {
             mensajeExito.style.display = 'none';
-        }, 30000); 
+        }, 3000); 
     }
 
     // Escuchar clics en los botones de envío de los formularios
@@ -31,34 +31,57 @@ document.addEventListener('DOMContentLoaded', function () {
         const formulario = document.getElementById(formularioId);
         const modalContent = document.getElementById('modal-content');
         modalContent.innerHTML = '';
-    
-        const inputs = formulario.querySelectorAll('input[data-label], select[data-label], textarea[data-label]');
-        let mostrarCamposAdicionales = false; // Bandera para controlar si se deben mostrar los campos adicionales
 
-        inputs.forEach(input => {
-            const label = input.getAttribute('data-label');
-            let value = input.value;
-            
-            // Si el campo es un checkbox, determinar su estado y establecer la bandera correspondiente
-            if (input.type === 'checkbox') {
-                value = input.checked ? 'Sí' : 'No';
-                mostrarCamposAdicionales = input.checked; // Establecer la bandera en verdadero si el checkbox está marcado
-            }
-            
-            // Si el campo es un <select>, obtenemos el texto de la opción seleccionada
-            if (input.tagName === 'SELECT') {
-                const selectedOption = input.options[input.selectedIndex];
-                value = selectedOption.text; // Obtenemos el texto de la opción seleccionada
-            }
-            
-            // Mostrar solo si la bandera mostrarCamposAdicionales es verdadera
-            if (!mostrarCamposAdicionales && ['id_inversor_prestamista_deudor', 'tipo_cta', 'id_contrato'].includes(input.id)) {
-                return; // Salir de la iteración si no se deben mostrar los campos adicionales
-            }
+        const inversorCheckbox = formulario.querySelector('#inversor_prestamista_deudor_T_F');
+        const rolSelect = formulario.querySelector('#rol_financiero');
+        const idInversorPrestamistaDeudor = formulario.querySelector('#id_inversor_prestamista_deudor');
+        const tipoCta = formulario.querySelector('#tipo_cta');
+        const idContrato = formulario.querySelector('#id_contrato');
 
-            modalContent.innerHTML += `<strong>${label}:</strong> ${value}<br>`;
-        });
-    
+        // Mostrar todos los campos para el formulario "cuenta" y aplicar condiciones específicas
+        if (formularioId === 'cuenta') {
+            modalContent.innerHTML += `<strong>Nombre de la Cuenta:</strong> ${document.querySelector('#nombre_cuenta').value}<br>`;
+            modalContent.innerHTML += `<strong>Empresa:</strong> ${document.getElementById('id_empresa').options[document.getElementById('id_empresa').selectedIndex].text}<br>`;
+            modalContent.innerHTML += `<strong>Concepto:</strong> ${document.getElementById('id_concepto').options[document.getElementById('id_concepto').selectedIndex].text}<br>`;
+            modalContent.innerHTML += `<strong>Moneda:</strong> ${document.getElementById('id_moneda').options[document.getElementById('id_moneda').selectedIndex].text}<br>`;
+            // Si el checkbox "inversor_prestamista_deudor_T_F" está marcado, mostrar "Sí", de lo contrario, mostrar "No"
+            const inversorValue = inversorCheckbox.checked ? 'Sí' : 'No';
+            modalContent.innerHTML += `<strong>¿Agente Financiero?:</strong> ${inversorValue}<br>`;
+
+            // Si está marcado como inversor, mostrar los campos "Rol Financiero" e "ID Inversor Prestamista Deudor"
+            if (inversorCheckbox.checked) {
+                modalContent.innerHTML += `<strong>Rol Financiero: </strong> ${rolSelect.value}<br>`;
+                modalContent.innerHTML += `<strong>Nombre:</strong> ${idInversorPrestamistaDeudor.options[idInversorPrestamistaDeudor.selectedIndex].text}<br>`;
+
+                // Si el ID Inversor Prestamista Deudor coincide con "Inversor", mostrar los campos "Tipo de Cuenta" e "ID de Contrato"
+                if (rolSelect.value === 'Inversor') {
+                    modalContent.innerHTML += `<strong>Tipo de Cuenta:</strong> ${tipoCta.value}<br>`;
+                    modalContent.innerHTML += `<strong>Contrato:</strong> ${idContrato.options[idContrato.selectedIndex].text}<br>`;
+                }
+            }
+        } else {
+            // Mostrar siempre todos los campos para formularios que no son "cuenta"
+            const inputs = formulario.querySelectorAll('input[data-label], select[data-label], textarea[data-label]');
+            inputs.forEach(input => {
+                const label = input.getAttribute('data-label');
+                let value = input.value;
+                
+                // Si el campo es un checkbox, determinar su estado y establecer el valor correspondiente
+                if (input.type === 'checkbox') {
+                    value = input.checked ? 'Sí' : 'No';
+                }
+                
+                // Si el campo es un <select>, obtenemos el texto de la opción seleccionada
+                if (input.tagName === 'SELECT') {
+                    const selectedOption = input.options[input.selectedIndex];
+                    value = selectedOption.text; // Obtenemos el texto de la opción seleccionada
+                }
+                
+                // Mostrar siempre todos los campos
+                modalContent.innerHTML += `<strong>${label}:</strong> ${value}<br>`;
+            });
+        }
+
         // Si el usuario confirma, envía el formulario
         confirmBtn.onclick = function () {
             formulario.submit();

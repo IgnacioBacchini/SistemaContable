@@ -40,7 +40,7 @@ def show_main():
 @app.route("/api/inversor")
 def show_inversor():
     #Conceptos a filtrar
-    conceptos = [10,11,15,17]
+    conceptos = [10,11,15,16,99]
     # Llama a la función para obtener los resultados de las tres consultas
     datos_peso, datos_euro, datos_dolar = obtener_reportes(conceptos)
     # Renderiza los resultados en una plantilla HTML
@@ -48,10 +48,16 @@ def show_inversor():
 
 @app.route("/api/saldo")
 def show_saldos():
-    #Conceptos a filtrar
-    conceptos = [2,3,4,5,6,7,8,9,12,13,14,18]
+    ids_conceptos = db.session.query(Concepto.id_concepto).all()
+    print(ids_conceptos)
+    todos_los_ids = [id_concepto[0] for id_concepto in ids_conceptos]
+    print(todos_los_ids)
+    conceptos_excluidos = [1, 10, 11, 15, 16]
+    print(conceptos_excluidos)
+    conceptos_a_pasar = [id_concepto for id_concepto in todos_los_ids if id_concepto not in conceptos_excluidos]
+    print(conceptos_a_pasar)
     # Llama a la función para obtener los resultados de las tres consultas
-    datos_peso, datos_euro, datos_dolar = obtener_reportes(conceptos)
+    datos_peso, datos_euro, datos_dolar = obtener_reportes(conceptos_a_pasar)
     # Renderiza los resultados en una plantilla HTML
     return render_template('saldo.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
@@ -482,12 +488,18 @@ def add_account():
         id_concepto = request.form["id_concepto"]
         id_moneda = request.form["id_moneda"]
         nombre_cuenta = request.form["nombre_cuenta"]
+        rol_financiero = request.form["rol_financiero"]
         inversor_prestamista_deudor_T_F = request.form.get("inversor_prestamista_deudor_T_F") == "on"  # Utiliza request.form.get para manejar el caso de que la casilla no esté marcada
         # Obtener los valores relacionados con el agente financiero si el checkbox está marcado
         if inversor_prestamista_deudor_T_F:
-            id_inversor_prestamista_deudor = request.form["id_inversor_prestamista_deudor"]
-            tipo_cta = request.form["tipo_cta"]
-            id_contrato = request.form["id_contrato"]
+            if rol_financiero == "Inversor":
+                id_inversor_prestamista_deudor = request.form["id_inversor_prestamista_deudor"]
+                tipo_cta = request.form["tipo_cta"]
+                id_contrato = request.form["id_contrato"]
+            else:
+                id_inversor_prestamista_deudor = request.form["id_inversor_prestamista_deudor"]
+                tipo_cta = request.form["tipo_cta"]
+                id_contrato = request.form["id_contrato"]
         else:
             # Establecer los valores como nulos si el checkbox no está marcado
             id_inversor_prestamista_deudor = None

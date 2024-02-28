@@ -238,12 +238,12 @@ def consultar_cuentas_inversores():
                 movimiento.id_cuenta_hacia = 1 #Renta Espera General
             elif row['inversor_o_prestamista_o_deudor'] == 'Prestamista':
                 movimiento.id_concepto_desde = 15
-                movimiento.id_concepto_hacia = 16
+                movimiento.id_concepto_hacia = 12
                 movimiento.id_cuenta_desde = row['id_cuenta']
                 movimiento.id_cuenta_hacia = 2 #Intereses por Prestamos Recibidos
             elif row['inversor_o_prestamista_o_deudor'] == 'Deudor':
-                movimiento.id_concepto_desde = 18
-                movimiento.id_concepto_hacia = 17
+                movimiento.id_concepto_desde = 12
+                movimiento.id_concepto_hacia = 16
                 movimiento.id_cuenta_desde = 3 #Intereses por prestamos brindados
                 movimiento.id_cuenta_hacia = row['id_cuenta']
             
@@ -291,7 +291,7 @@ def calcular_rentas(resultados_integrados):
             else:
                 renta = (sum_hacia_primero - sum_desde_primero) * ((1 + tasa_anual) ** (1/12) - 1)
         else:
-            renta = None
+            renta = 0
 
         rentas.append(renta)
 
