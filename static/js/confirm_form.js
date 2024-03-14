@@ -1,3 +1,23 @@
+// Función para validar si todos los campos requeridos del formulario con el ID especificado están completos
+function validarCamposRequeridos(formularioId) {
+    const formulario = document.getElementById(formularioId);
+    const campos = formulario.querySelectorAll('[required]');
+    let camposIncompletos = false;
+
+    campos.forEach(function (campo) {
+        if (!campo.value.trim()) {
+            camposIncompletos = true;
+            // Agrega una clase de error al campo incompleto si deseas resaltarlos visualmente
+            campo.classList.add('campo-incompleto');
+        } else {
+            // Elimina la clase de error si el campo está completo
+            campo.classList.remove('campo-incompleto');
+        }
+    });
+
+    return !camposIncompletos;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('modal');
     const closeBtn = document.getElementsByClassName('close')[0];
@@ -44,6 +64,9 @@ document.addEventListener('DOMContentLoaded', function () {
             modalContent.innerHTML += `<strong>Empresa:</strong> ${document.getElementById('id_empresa').options[document.getElementById('id_empresa').selectedIndex].text}<br>`;
             modalContent.innerHTML += `<strong>Concepto:</strong> ${document.getElementById('id_concepto').options[document.getElementById('id_concepto').selectedIndex].text}<br>`;
             modalContent.innerHTML += `<strong>Moneda:</strong> ${document.getElementById('id_moneda').options[document.getElementById('id_moneda').selectedIndex].text}<br>`;
+            const resultadoCheckbox = formulario.querySelector('#resultado');
+            const resultadoValue = resultadoCheckbox.checked ? 'Sí' : 'No';
+            modalContent.innerHTML += `<strong>¿Genera resultado?:</strong> ${resultadoValue}<br>`;
             // Si el checkbox "inversor_prestamista_deudor_T_F" está marcado, mostrar "Sí", de lo contrario, mostrar "No"
             const inversorValue = inversorCheckbox.checked ? 'Sí' : 'No';
             modalContent.innerHTML += `<strong>¿Agente Financiero?:</strong> ${inversorValue}<br>`;

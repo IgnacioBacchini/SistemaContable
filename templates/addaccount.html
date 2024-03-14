@@ -25,6 +25,7 @@
                         <th>Concepto</th>
                         <th>Moneda</th>
                         <th>Nombre Cuenta</th>
+                        <th>Resultado</th>
                         <th>Agente Financiero</th>
                         <th>Nombre</th>
                         <th>Tipo de Cuenta</th>
@@ -38,6 +39,7 @@
                             <td>{{ cuenta.concepto.nombre_concepto }}</td>
                             <td>{{ cuenta.moneda.descr_moneda }}</td>
                             <td>{{ cuenta.nombre_cuenta }}</td>
+                            <td>{{ cuenta.resultado }}</td>
                             <td>{{ cuenta.inversor_prestamista_deudor_T_F }}</td>
                             <td>
                                 {% if cuenta.inversor_prestamista_deudor_T_F %}
@@ -102,6 +104,12 @@
                     {% endfor %}
                 </select>
             </div>  
+            
+            <div class="form-group">
+                <label for="resultado">¿Genera resultado?</label>
+                <input type="checkbox" id="resultado" name="resultado" onclick="toggleInversorField()"
+                    data-label="Genera Resultado">
+            </div>
 
             <div class="form-group">
                 <label for="inversor_prestamista_deudor_T_F">¿Es Agente financiero?</label>

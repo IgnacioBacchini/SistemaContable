@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request, render_template, redirect, url_for, send_file
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_migrate import Migrate
 from logging import exception
 from datetime import date, datetime
@@ -11,11 +13,18 @@ from crear_zip import crear_zip_en_memoria
 # Configuración de la aplicación Flask
 app = Flask(__name__)
 
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Users\\ignac\\Desktop\\Argenway\\SistemaContable\\database\\SistemaPRU.db"
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///C:\\Roberto\\Argenway\\240120 aplicacion\\SistemaContable2\\SistemaContable\\database\\SistemaPRU.db"
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/sanchez/SistemaContable/database/SistemaPRU.db"
+app.config['SECRET_KEY'] = 'password'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Corregido: "SQLALCHEMY_TRACK_MODIFICATIONES"
 db.init_app(app)
+
+#login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # Ordeno las tablas
 tablas_ordenadas = [Empresa, Moneda, Usuario, Concepto, Inversor_prestamista_deudor, Cuentas]
@@ -34,10 +43,12 @@ def pagina_no_encontrada(error):
     return "<h1>La página que intentas buscar no existe...</h1>"
 
 @app.route("/api/base")
+@login_required
 def show_main():
     return render_template("base.html")
 
 @app.route("/api/inversor")
+@login_required
 def show_inversor():
     #Conceptos a filtrar
     conceptos = [10,11,15,16,99]
@@ -47,6 +58,7 @@ def show_inversor():
     return render_template('inversor.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
 @app.route("/api/saldo")
+@login_required
 def show_saldos():
     ids_conceptos = db.session.query(Concepto.id_concepto).all()
     print(ids_conceptos)
@@ -62,12 +74,14 @@ def show_saldos():
     return render_template('saldo.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
 @app.route("/api/showmovement")
+@login_required
 def show_movement():
     movimientos = RelacionMovimientos.query.all()
     # Renderiza los resultados en una plantilla HTML
     return render_template('showmovement.html', movimientos=movimientos)
 
 @app.route("/api/caja")
+@login_required
 def show_caja():
     #Conceptos a filtrar
     conceptos = [1]
@@ -76,27 +90,39 @@ def show_caja():
     # Renderiza los resultados en una plantilla HTML
     return render_template('caja.html',datos_peso=datos_peso, datos_euro=datos_euro, datos_dolar=datos_dolar)
 
+@login_manager.user_loader
+def load_user(id_usuario):
+    # Carga y devuelve el usuario a partir del ID de usuario almacenado en la sesión
+    return Usuario.query.get(int(id_usuario))
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    error = None
     if request.method == 'POST':
         nombre_usuario = request.form['nombre_usuario']
         contrasenia = request.form['contrasenia']
         
         # Consultar la base de datos para verificar las credenciales
-        usuario = Usuario.query.filter_by(nombre_usuario=nombre_usuario, contrasenia_usuario=contrasenia).first()
+        usuario = Usuario.query.filter_by(nombre_usuario=nombre_usuario).first()
         
-        if usuario:
-            # Autenticación exitosa, redirigir al usuario a la página principal
+        if usuario and check_password_hash(usuario.contrasenia_usuario, contrasenia):
+            # Autenticación exitosa, loguear al usuario
+            login_user(usuario)
+            # Redirigir al usuario a la página principal
             return redirect(url_for('home'))
-        else:
-            # Si las credenciales son incorrectas, muestra un mensaje de error
-            error = 'Nombre de usuario o contraseña incorrectos. Inténtalo de nuevo.'
+        
+        return "Usuario o contraseña inválidos"
 
-    # Si es un GET request, renderiza la página de inicio de sesión
-    return render_template('login.html', error=error)
+    # Si es un GET request o si hubo un error de autenticación, renderiza la página de inicio de sesión
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route("/api/rent", methods=["GET", "POST"])
+@login_required
 def calcular_renta():
     if request.method == "POST":
         try:
@@ -113,6 +139,7 @@ parent_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Ruta para descargar el archivo ZIP
 @app.route('/download_zip')
+@login_required
 def download_csv():
     # Crear el archivo ZIP en memoria
     archivo_zip = crear_zip_en_memoria()
@@ -126,12 +153,14 @@ def download_csv():
 
 #----Muestro el formulario para agregar CAC----#
 @app.route("/api/addcac")
+@login_required
 def show_cac():
     opciones_cac = sorted(Indice_cac.query.all(), key=lambda cac: cac.indice)
     return render_template("addcac.html",opciones_cac=opciones_cac)
 
 #----Obtengo datos del formulario tasa----#
 @app.route("/api/addcac", methods=["POST"])
+@login_required
 def add_cac():
     try:
         uno_mes_anio_str = request.form["uno_mes_anio"]
@@ -157,6 +186,7 @@ def add_cac():
 
 #----Muestro el formulario para agregar movimiento----#
 @app.route("/api/addmovement", methods=["GET"])
+@login_required
 def show_movement_form():
     opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
     opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
@@ -164,11 +194,14 @@ def show_movement_form():
     opciones_cuenta = sorted(Cuentas.query.all(), key=lambda cuenta: cuenta.nombre_cuenta)
     # Obtener la fecha actual
     fecha_actual = date.today().strftime("%Y-%m-%d")
+    fecha_minima = (date.today() - timedelta(days=7)).strftime("%Y-%m-%d")
+    fecha_maxima = (date.today() + timedelta(days=7)).strftime("%Y-%m-%d")
     
-    return render_template("movimientos.html",fecha_actual=fecha_actual,opciones_cuenta=opciones_cuenta, opciones_concepto=opciones_concepto, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa)
+    return render_template("movimientos.html",fecha_minima=fecha_minima,fecha_maxima=fecha_maxima,fecha_actual=fecha_actual,opciones_cuenta=opciones_cuenta, opciones_concepto=opciones_concepto, opciones_moneda=opciones_moneda, opciones_empresa=opciones_empresa)
 
 #----Obtengo datos del formulario movimientos----#
 @app.route("/api/get_cuentas", methods=["POST"])
+@login_required
 def get_cuentas():
     try:
         data = request.get_json()
@@ -195,6 +228,7 @@ def get_cuentas():
         return jsonify({"msg": "Algo ha salido mal"}), 500
 
 @app.route("/api/get_cuentas_hacia", methods=["POST"])
+@login_required
 def get_cuentas_hacia():
     try:
         data = request.get_json()
@@ -222,9 +256,12 @@ def get_cuentas_hacia():
 
 # Modificar la función add_movement para recibir concepto_desde y concepto_hacia
 @app.route("/api/addmovement", methods=["POST"])
+@login_required
 def add_movement():
     
     try:
+        # Obtener el usuario logueado
+        usuario = current_user
         # Obtener los datos del formulario
         fecha_str = request.form["fecha"]
         id_empresa = request.form["id_empresa"]
@@ -244,6 +281,7 @@ def add_movement():
         # Crear un nuevo objeto RelacionMovimientos
         nuevo_movimiento = RelacionMovimientos(
             fecha=fecha,
+            id_usuario=usuario.id_usuario,  # Asigna el ID del usuario al nuevo movimiento
             id_empresa=id_empresa,
             tipo_de_cambio=tipo_de_cambio,
             id_moneda_desde=id_moneda_desde,
@@ -272,12 +310,14 @@ def add_movement():
 
 #----Muestro el formulario para empresa----#
 @app.route("/api/addcompany", methods=["GET"])
+@login_required
 def show_company_form():
     opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
     return render_template("addcompany.html", opciones_empresa=opciones_empresa)
 
 #----Obtengo datos del formulario para agregar empresa----#
 @app.route("/api/addcompany", methods=["POST"])
+@login_required
 def add_company():
     try:
         nombre_empresa = request.form["nombre_empresa"]
@@ -305,12 +345,14 @@ def add_company():
     
 #----Muestro el formulario para inversor_prestamista_deudor----#
 @app.route("/api/addinvestor", methods=["GET"])
+@login_required
 def show_investor_form():
     opciones_inversor_prestamista_deudor = sorted(Inversor_prestamista_deudor.query.all(), key=lambda inversor_prestamista_deudor: inversor_prestamista_deudor.nombre_inversor_prestamista_deudor)
     return render_template("addinvestor.html", opciones_inversor_prestamista_deudor=opciones_inversor_prestamista_deudor)
 
 #----Obtengo datos del formulario para agregar inversor_prestamista_deudor----#
 @app.route("/api/addinvestor", methods=["POST"])
+@login_required
 def add_investor():
     try:
         nombre_inversor_prestamista_deudor = request.form["nombre_inversor_prestamista_deudor"]
@@ -338,12 +380,14 @@ def add_investor():
 
 #----Muestro el formulario para proyecto----#
 @app.route("/api/addproyect", methods=["GET"])
+@login_required
 def show_proyect_form():
     opciones_proyecto = sorted(Proyecto.query.all(), key=lambda proyecto: proyecto.nombre_proyecto)
     return render_template("addproyect.html", opciones_proyecto=opciones_proyecto)
 
 #----Obtengo datos del formulario para agregar proyecto----#
 @app.route("/api/addproyect", methods=["POST"])
+@login_required
 def add_proyect():
     try:
         nombre_proyecto = request.form["nombre_proyecto"]
@@ -372,15 +416,16 @@ def add_proyect():
         db.session.rollback()
         return jsonify({"msg": "Algo ha salido mal"}), 500
 
-
 #----Muestro el formulario para moneda----#
 @app.route("/api/addcoin", methods=["GET"])
+@login_required
 def show_coin_form():
     opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
     return render_template("addcoin.html", opciones_moneda=opciones_moneda)
 
 #----Obtengo datos del formulario para agregar moneda----#
 @app.route("/api/addcoin", methods=["POST"])
+@login_required
 def add_coin():
     try:
         descr_moneda = request.form["descr_moneda"]
@@ -405,12 +450,14 @@ def add_coin():
 
 #----Muestro el formulario para conceptos----#
 @app.route("/api/addconcept", methods=["GET"])
+@login_required
 def show_concept_form():
     opciones_concepto = sorted(Concepto.query.all(), key=lambda concepto: concepto.nombre_concepto)
     return render_template("addconcept.html", opciones_concepto=opciones_concepto)
 
 #----Obtengo datos del formulario para agregar concepto----#
 @app.route("/api/addconcept", methods=["POST"])
+@login_required
 def add_concept():
     try:
         nombre_concepto = request.form["nombre_concepto"]
@@ -434,18 +481,19 @@ def add_concept():
         
 #----Muestro el formulario para usuarios----#
 @app.route("/api/adduser", methods=["GET"])
+@login_required
 def show_user_form():
     opciones_usuario = sorted(Usuario.query.all(), key=lambda usuario: usuario.nombre_usuario)
     return render_template("adduser.html", opciones_usuario=opciones_usuario)
 
 #----Obtengo datos del formulario para agregar usuario----#
 @app.route("/api/adduser", methods=["POST"])
+@login_required
 def add_user():
     try:
         nombre_usuario = request.form["nombre_usuario"]
-        mail_usuario = request.form["mail_usuario"]
         contrasenia_usuario = request.form["contrasenia_usuario"]
-
+        contrasenia_hash = generate_password_hash(contrasenia_usuario)
         # # Verificar si el usuario ya existe
         # if Usuario.query.filter_by(nombre_usuario=nombre_usuario).first():
         #     error = "El usuario ya existe"
@@ -454,8 +502,7 @@ def add_user():
         # Crear un nuevo objeto Usuario
         nuevo_usuario = Usuario(
             nombre_usuario=nombre_usuario,
-            mail_usuario=mail_usuario,
-            contrasenia_usuario=contrasenia_usuario
+            contrasenia_usuario=contrasenia_hash
         )
         db.session.add(nuevo_usuario)
         db.session.commit()
@@ -470,6 +517,7 @@ def add_user():
 
 #----Muestro el formulario para agregar cuenta----#
 @app.route("/api/addaccount", methods=["GET"])
+@login_required
 def show_account_form():
     opciones_moneda = sorted(Moneda.query.all(), key=lambda moneda: moneda.descr_moneda)
     opciones_empresa = sorted(Empresa.query.all(), key=lambda empresa: empresa.nombre_empresa)
@@ -482,12 +530,14 @@ def show_account_form():
 
 #----Obtengo datos del formulario cuenta----#
 @app.route("/api/addaccount", methods=["POST"])
+@login_required
 def add_account():
     try:
         id_empresa = request.form["id_empresa"]
         id_concepto = request.form["id_concepto"]
         id_moneda = request.form["id_moneda"]
         nombre_cuenta = request.form["nombre_cuenta"]
+        resultado = request.form.get("resultado") == "on"
         rol_financiero = request.form["rol_financiero"]
         inversor_prestamista_deudor_T_F = request.form.get("inversor_prestamista_deudor_T_F") == "on"  # Utiliza request.form.get para manejar el caso de que la casilla no esté marcada
         # Obtener los valores relacionados con el agente financiero si el checkbox está marcado
@@ -512,6 +562,7 @@ def add_account():
             id_concepto=id_concepto,
             id_moneda=id_moneda,
             nombre_cuenta=nombre_cuenta,
+            resultado=resultado,
             inversor_prestamista_deudor_T_F=inversor_prestamista_deudor_T_F,
             id_inversor_prestamista_deudor=id_inversor_prestamista_deudor,
             tipo_cta=tipo_cta,
@@ -531,6 +582,7 @@ def add_account():
 
 #----Muestro el formulario para agregar contrato----#
 @app.route("/api/addcontract", methods=["GET"])
+@login_required
 def show_contract_form():    
     opciones_contrato = sorted(Contrato.query.all(), key=lambda contrato: contrato.nombre_contrato)
     opciones_inversor_prestamista_deudor = sorted(Inversor_prestamista_deudor.query.all(), key=lambda inversor_prestamista_deudor: inversor_prestamista_deudor.nombre_inversor_prestamista_deudor)
@@ -542,6 +594,7 @@ def show_contract_form():
 
 #----Obtengo datos del formulario contrato----#
 @app.route("/api/addcontract", methods=["POST"])
+@login_required
 def add_contract():
     try:
         nombre_contrato = request.form["nombre_contrato"]
@@ -551,6 +604,7 @@ def add_contract():
         id_moneda = request.form["id_moneda"]
         inversor_o_prestamista_o_deudor = request.form["inversor_o_prestamista_o_deudor"]
         tasa_anual = request.form["tasa_anual"]
+        tasa_anual_RE = request.form["tasa_anual_RE"]
         aplica_CAC_T_F = request.form.get("act_cac") == "on"  # True if checkbox is checked, False otherwise
         monto_contrato = request.form["monto_contrato"]
 
@@ -564,6 +618,7 @@ def add_contract():
             id_moneda=id_moneda,
             inversor_o_prestamista_o_deudor=inversor_o_prestamista_o_deudor,
             tasa_anual=tasa_anual,
+            tasa_anual_RE=tasa_anual_RE,
             aplica_CAC_T_F=aplica_CAC_T_F,
             monto_contrato=monto_contrato
         )

@@ -25,20 +25,18 @@ class Moneda(db.Model):
             'descr_moneda': self.descr_moneda
         }
 
-class Usuario(db.Model, UserMixin):
+class Usuario(UserMixin, db.Model):
     id_usuario = db.Column(db.Integer, unique=True, primary_key=True)
     nombre_usuario = db.Column(db.Text)
-    mail_usuario = db.Column(db.Text)
     contrasenia_usuario = db.Column(db.Text)
     
     def get_id(self):
-        return str(self.id)
+        return str(self.id_usuario)
     
     def serialize(self):
         return {
             'id_usuario': self.id_usuario,
             'nombre_usuario': self.nombre_usuario,
-            'mail_usuario': self.mail_usuario,
             'contrasenia_usuario': self.contrasenia_usuario
         }
 
@@ -84,6 +82,7 @@ class Contrato(db.Model):
     id_moneda = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
     inversor_o_prestamista_o_deudor = db.Column(db.Text)
     tasa_anual = db.Column(db.Float)
+    tasa_anual_RE = db.Column(db.Float)
     aplica_CAC_T_F = db.Column(db.Boolean)
     monto_contrato = db.Column(db.Float)
     
@@ -103,6 +102,7 @@ class Contrato(db.Model):
             'id_moneda': self.id_moneda,
             'inversor_o_prestamista_o_deudor': self.inversor_o_prestamista_o_deudor,
             'tasa_anual': self.tasa_anual,
+            'tasa_anual_RE': self.tasa_anual_RE,
             'aplica_CAC_T_F': self.aplica_CAC_T_F,
             'monto_contrato': self.monto_contrato,
         }
@@ -113,6 +113,7 @@ class Cuentas(db.Model):
     id_concepto = db.Column(db.Integer, db.ForeignKey('concepto.id_concepto'))
     id_moneda = db.Column(db.Integer, db.ForeignKey('moneda.id_moneda'))
     nombre_cuenta = db.Column(db.Text)
+    resultado = db.Column(db.Boolean)
     inversor_prestamista_deudor_T_F = db.Column(db.Boolean)
     id_inversor_prestamista_deudor = db.Column(db.Integer, db.ForeignKey('inversor_prestamista_deudor.id_inversor_prestamista_deudor'))
     tipo_cta = db.Column(db.Text)
@@ -132,6 +133,7 @@ class Cuentas(db.Model):
             'id_concepto': self.id_concepto,
             'id_moneda': self.id_moneda,
             'nombre_cuenta': self.nombre_cuenta,
+            'resultado': self.resultado,
             'inversor_prestamista_deudor_T_F': self.inversor_prestamista_deudor_T_F,
             'id_inversor_prestamista_deudor': self.id_inversor_prestamista_deudor,
             'tipo_cta': self.tipo_cta,

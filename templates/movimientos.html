@@ -23,7 +23,8 @@
         <form id="movimiento" class="text-black" action="/api/addmovement" method="post">
             <div class="form-group">
                 <label for="fecha">Fecha:</label>
-                <input data-label="Fecha"class="text-black" type="date" id="fecha" name="fecha" value="{{ fecha_actual }}" readonly><br>
+                <input data-label="Fecha" class="text-black" type="date" id="fecha" name="fecha" 
+                    min="{{ fecha_minima }}" max="{{ fecha_maxima }}" value="{{ fecha_actual }}">
             </div>
 
             <div class="form-group">

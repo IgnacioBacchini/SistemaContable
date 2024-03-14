@@ -178,6 +178,7 @@ def consultar_cuentas_inversores():
             Cuentas.id_contrato,
             Contrato.inversor_o_prestamista_o_deudor,
             Contrato.tasa_anual,
+            Contrato.tasa_anual_RE,
             Contrato.aplica_CAC_T_F,
             Contrato.monto_contrato
         )
@@ -201,7 +202,8 @@ def consultar_cuentas_inversores():
             'suma_valor_hacia_p',
             'id_contrato', 
             'inversor_o_prestamista_o_deudor', 
-            'tasa_anual', 
+            'tasa_anual',
+            'tasa_anual_RE',
             'aplica_CAC_T_F',
             'monto_contrato'
         ])
@@ -272,12 +274,15 @@ def calcular_rentas(resultados_integrados):
         sum_hacia_primero = resultado.suma_valor_hacia_primero if resultado.suma_valor_hacia_primero is not None else 0
         sum_hacia_ultimo = resultado.suma_valor_hacia_ultimo if resultado.suma_valor_hacia_ultimo is not None else 0
         tasa_anual = resultado.tasa_anual
+        tasa_anual_RE = resultado.tasa_anual_RE
         monto_contrato = resultado.monto_contrato
 
         if inversor_prestamista_o_deudor == "Inversor":
             if sum_desde_primero - sum_hacia_primero >= monto_contrato and \
                 sum_desde_ultimo - sum_hacia_ultimo >= monto_contrato:
-                renta = (sum_desde_ultimo - sum_hacia_ultimo) * ((1 + tasa_anual) ** (1/12) - 1)
+                renta = monto_contrato * ((1 + tasa_anual) ** (1/12) - 1) + \
+                        (sum_desde_ultimo - sum_hacia_ultimo - monto_contrato) * ((1 + tasa_anual_RE) ** (1/12) - 1)
+                
             else:
                 renta = 0
         elif inversor_prestamista_o_deudor == "Prestamista":

@@ -21,14 +21,12 @@
                 <thead>
                     <tr>
                         <th>Usuario</th>
-                        <th>Correo</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for usuario in opciones_usuario %}
                         <tr>
                             <td>{{ usuario.nombre_usuario }}</td>
-                            <td>{{ usuario.mail_usuario}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -45,12 +43,8 @@
                 <input data-label="Nombre" type="text" id="nombre_usuario" name="nombre_usuario" required>
             </div>
             <div class="form-group">
-                <label for="mail_usuario">Mail del Usuario:</label>
-                <input data-label="Mail" type="text" id="mail_usuario" name="mail_usuario" required>
-            </div>
-            <div class="form-group">
                 <label for="contrasenia_usuario">Clave del Usuario:</label>
-                <input data-label="Contraseña" type="text" id="contrasenia_usuario" name="contrasenia_usuario" required>
+                <input data-label="Contraseña" type="password" id="contrasenia_usuario" name="contrasenia_usuario" required>
             </div>
             <button type="submit" data-form-id="usuario" value="Agregar Ususario" class="w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar usuario</button>
         </form>

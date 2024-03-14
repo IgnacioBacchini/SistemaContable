@@ -26,7 +26,8 @@
                         <th>Proyecto</th>
                         <th>Moneda</th>
                         <th>Tipo de Inversor</th>
-                        <th>Tasa Anual</th>
+                        <th>Tasa Anual Capital</th>
+                        <th>Tasa Anual Renta Espera</th>
                         <th>CAC</th>
                         <th>Monto</th>
                     </tr>
@@ -41,6 +42,7 @@
                             <td>{{ contrato.moneda.descr_moneda }}</td>
                             <td>{{ contrato.inversor_prestamista_deudor.inversor_o_prestamista_o_deudor }}</td>
                             <td>{{ contrato.tasa_anual }}</td>
+                            <td>{{ contrato.tasa_anual_RE }}</td>
                             <td>{{ contrato.aplica_CAC_T_F }}</td>
                             <td>{{ contrato.monto_contrato }}</td>
                         </tr>
@@ -108,8 +110,13 @@
             </div>
 
             <div class="form-group">
-                <label for="tasa_anual">Tasa Anual:</label>
-                <input type="number" data-label="Tasa Anual" id="tasa_anual" name="tasa_anual" step="0.01" min="0" max="1.00" required><br>
+                <label for="tasa_anual">Tasa Anual Capital:</label>
+                <input type="number" data-label="Tasa Anual Capital" id="tasa_anual" name="tasa_anual" step="0.01" min="0" max="1.00" required><br>
+            </div>
+
+            <div class="form-group">
+                <label for="tasa_anual_RE">Tasa Anual Renta Espera:</label>
+                <input type="number" data-label="Tasa Anual Renta Espera" id="tasa_anual_RE" name="tasa_anual_RE" step="0.01" min="0" max="1.00" required><br>
             </div>
 
             <div class="form-group">

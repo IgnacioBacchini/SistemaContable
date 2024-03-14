@@ -245,3 +245,13 @@ li:hover {
 .align-right {
   text-align: right;
 }
+
+/* Estilos personalizados para el enlace de cierre de sesión */
+.logout-link {
+  color: #fff; /* Texto blanco */
+  transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.logout-link:hover {
+  background-color: #a7a5a5; /* Cambiar color de fondo al pasar el cursor */
+}
