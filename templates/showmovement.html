@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css"
+    />
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"
+    ></script>
+    <!-- CSS de DataTables -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css"
+    />
+    <!-- CSS de DataTables SearchBuilder -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/searchbuilder/1.0.2/css/searchBuilder.dataTables.min.css"
+    />
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- DataTables -->
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"
+    ></script>
+    <!-- DataTables SearchBuilder -->
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/searchbuilder/1.0.2/js/dataTables.searchBuilder.min.js"
+    ></script>
+    <title>Sistema Contable</title>
+  </head>
+  <body>
+    {% extends 'base.html' %} {% block content %}
+        <table id="tabla-movimientos" class="dataTable display">
+          <thead>
+            <tr>
+              <th>ID Movimiento</th>
+              <th>Usuario</th>
+              <th>Fecha</th>
+              <th>Empresa</th>
+              <th>Moneda Desde</th>
+              <th>Concepto Desde</th>
+              <th>Cuenta Hacia</th>
+              <th>Valor Desde</th>
+              <th>Moneda Hacia</th>
+              <th>Concepto Hacia</th>
+              <th>Cuenta Hacia</th>
+              <th>Tipo de Cambio</th>
+              <th>Valor Hacia</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for movimiento in movimientos %}
+            <tr>
+              <td>{{ movimiento.id_movimiento }}</td>
+              <td>{{ movimiento.usuario.nombre_usuario }}</td>
+              <td>{{ movimiento.fecha }}</td>
+              <td>{{ movimiento.empresa.nombre_empresa }}</td>
+              <td>{{ movimiento.moneda_desde.descr_moneda }}</td>
+              <td>{{ movimiento.concepto_desde.nombre_concepto }}</td>
+              <td>{{ movimiento.cuenta_desde.nombre_cuenta }}</td>
+              <td>
+                {{ movimiento.valor_desde | round(2) }}
+              </td>
+              <td>{{ movimiento.moneda_hacia.descr_moneda }}</td>
+              <td>{{ movimiento.concepto_hacia.nombre_concepto }}</td>
+              <td>{{ movimiento.cuenta_hacia.nombre_cuenta }}</td>
+              <td>
+                {{ movimiento.tipo_de_cambio | round(2) }}
+              </td>
+              <td>
+                {{ movimiento.valor_hacia_calculado | round(2) }}
+              </td>
+              <td>{{ movimiento.descripcion }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
+    {% endblock %}
+  </body>
+</html>

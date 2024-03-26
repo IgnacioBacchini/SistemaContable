@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/login.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="formulario">
+        <h1>Inicio de sesion</h1>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="post" action="{{ url_for('login') }}">
+            <div class="username">
+                <input type="text" id="nombre_usuario"  name="nombre_usuario" placeholder="Nombre de usuario" required>
+            </div>
+            <div class="username">
+                <input type="password" id="contrasenia" name="contrasenia" placeholder="Contraseña" required>
+            </div>
+            <button type="submit">Iniciar sesión</button>
+        </form>
+    </div>
+</body>
+</html>
