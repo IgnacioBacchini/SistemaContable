@@ -1,58 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Sistema Contable</title>
-</head>
-<body class="bg-gray-200 container mx-auto">
-    <header>
-    <div class="grid place-content-center">
-        <h1 class="text-5xl text-black ">Sistema de gestión</h1>
-    </div>
+  </head>
+  <body class="bg-gray-200">
+    <div class="container-header">
+      <header>
+        <h1>Sistema de gestión</h1>
+
         <nav>
-            <div class="config-option">
-                <a class="nav-link" href="#">Movimiento de Fondos</a>
-                <div class="dropdown-content">
-                    <a href="/api/addmovement">Añadir Movimiento</a>
-                    <a href="/api/showmovement">Consultar Movimientos</a>
-                </div>
+          <div class="config-option">
+            <a class="nav-link" href="#">Movimiento de Fondos</a>
+            <div class="dropdown-content">
+              <a href="/api/addmovement">Añadir Movimiento</a>
+              <a href="/api/showmovement">Consultar Movimientos</a>
             </div>
-            <div class="config-option">
-                <a class="nav-link" href="#">Configuración</a>
-                <div class="dropdown-content ">
-                    <a class="text-black" href="/api/addcompany">Empresa</a>
-                    <a href="/api/addinvestor">Agente Financiero</a>
-                    <a href="/api/addcoin">Moneda</a>
-                    <a href="/api/addconcept">Concepto</a>
-                    <a href="/api/addproyect">Proyecto</a>
-                    <a href="/api/addcontract">Contrato</a>
-                    <a href="/api/addaccount">Cuenta</a>
-                    <a href="/api/adduser">Usuario</a>
-                    <a href="/api/addcac">Índice CAC</a>
-                </div>
+          </div>
+          <div class="config-option">
+            <a class="nav-link" href="#">Configuración</a>
+            <div class="dropdown-content">
+              <a class="text-black" href="/api/addcompany">Empresa</a>
+              <a href="/api/addinvestor">Agente Financiero</a>
+              <a href="/api/addcoin">Moneda</a>
+              <a href="/api/addconcept">Concepto</a>
+              <a href="/api/addproyect">Proyecto</a>
+              <a href="/api/addcontract">Contrato</a>
+              <a href="/api/addaccount">Cuenta</a>
+              <a href="/api/adduser">Usuario</a>
+              <a href="/api/addcac">Índice CAC</a>
             </div>
-            <!-- Otras opciones de navegación aquí -->
-            <div class="config-option">
-                <a class="nav-link" href="#">Reportes</a>
-                <div class="dropdown-content">
-                    <a href="/api/inversor">Agente Financiero</a>
-                    <a href="/api/saldo">Otras cuentas</a>
-                    <a href="/api/caja">Cajas</a>
-                    <a href="/download_zip">Descargar Tablas</a>
-                </div>
+          </div>
+          <!-- Otras opciones de navegación aquí -->
+          <div class="config-option">
+            <a class="nav-link" href="#">Reportes</a>
+            <div class="dropdown-content">
+              <a href="/api/inversor">Agente Financiero</a>
+              <a href="/api/saldo">Otras cuentas</a>
+              <a href="/api/caja">Cajas</a>
+              <a href="/download_zip">Descargar Tablas</a>
             </div>
-            <a href="/api/rent">Cálculo de Intereses</a>
-            <a href="{{ url_for('logout') }}" class="logout-link" style="margin-left: auto;">Cerrar sesión</a> <!-- Enlace de cierre de sesión con estilos personalizados -->
+          </div>
+          <a href="/api/rent">Cálculo de Intereses</a>
+          <a
+            href="{{ url_for('logout') }}"
+            class="logout-link"
+            style="margin-left: auto"
+            >Cerrar sesión</a
+          >
+          <!-- Enlace de cierre de sesión con estilos personalizados -->
         </nav>
-    </header>
-
-    <div class="content">
-        {% block content %}{% endblock %}
+      </header>
     </div>
-
     
-</body>
+    <div class="content">{% block content %}{% endblock %}</div>
+    
+  </body>
 </html>
