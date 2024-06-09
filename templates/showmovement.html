@@ -26,42 +26,42 @@
     {% block content %}
         <div class="styled-table-container">            
             <div>
-                <table id="tabla-movimientos" class="display dataTable styled-table">
+                <table id="tabla-movimientos" class="display dataTable styled-table" style="width: 100%; table-layout: fixed;">
                     <thead>
-                        <tr>
-                            <th>ID Movimiento</th>
-                            <th>Usuario</th>
-                            <th>Fecha</th>
-                            <th>Empresa</th>
-                            <th>Moneda Desde</th>
-                            <th>Concepto Desde</th>
-                            <th>Cuenta Hacia</th>
-                            <th class="align-right">Valor Desde</th>
-                            <th>Moneda Hacia</th>
-                            <th>Concepto Hacia</th>
-                            <th>Cuenta Hacia</th>
-                            <th class="align-right">Tipo de Cambio</th>
-                            <th class="align-right">Valor Hacia</th>
-                            <th>Descripción</th>
+                        <tr style="font-size: 12px;">
+                            <th style="width: 1%;">ID</th>
+                            <th style="width: 5%;">Usuario</th>
+                            <th style="width: 3%;">Fecha</th>
+                            <th style="width: 5%;">Empresa</th>
+                            <th style="white-space: normal;">Moneda Desde</th>
+                            <th style="white-space: normal;">Concepto Desde</th>
+                            <th style="white-space: normal;">Cuenta Desde</th>
+                            <th style="white-space: normal;">Valor Desde</th>
+                            <th style="white-space: normal;">Moneda Hacia</th>
+                            <th style="white-space: normal;">Concepto Hacia</th>
+                            <th style="white-space: normal;">Cuenta Hacia</th>
+                            <th style="width: 4%;">Cambio</th>
+                            <th style="white-space: normal;">Valor Hacia</th>
+                            <th style="font-size: 11px;" style="white-space: normal; word-break: keep-all;">Descripción</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for movimiento in movimientos %}
-                            <tr>
+                            <tr style="font-size: 12px;">
                                 <td>{{ movimiento.id_movimiento }}</td>
                                 <td>{{ movimiento.usuario.nombre_usuario }}</td>
-                                <td>{{ movimiento.fecha }}</td>
+                                <td>{{ movimiento.fecha.strftime('%d-%m-%Y') }}</td>
                                 <td>{{ movimiento.empresa.nombre_empresa }}</td>
                                 <td>{{ movimiento.moneda_desde.descr_moneda }}</td>
-                                <td>{{ movimiento.concepto_desde.nombre_concepto }}</td>
-                                <td>{{ movimiento.cuenta_desde.nombre_cuenta }}</td>
+                                <td style="white-space: normal;">{{ movimiento.concepto_desde.nombre_concepto }}</td>
+                                <td style="white-space: normal;">{{ movimiento.cuenta_desde.nombre_cuenta }}</td>
                                 <td class="align-right" class="number">{{ movimiento.valor_desde | round(2) }}</td>
-                                <td>{{ movimiento.moneda_hacia.descr_moneda }}</td>
-                                <td>{{ movimiento.concepto_hacia.nombre_concepto }}</td>
-                                <td>{{ movimiento.cuenta_hacia.nombre_cuenta }}</td>
+                                <td >{{ movimiento.moneda_hacia.descr_moneda }}</td>
+                                <td style="white-space: normal;">{{ movimiento.concepto_hacia.nombre_concepto }}</td>
+                                <td style="white-space: normal;">{{ movimiento.cuenta_hacia.nombre_cuenta }}</td>
                                 <td class="align-right" class="number">{{ movimiento.tipo_de_cambio | round(2) }}</td>
                                 <td class="align-right" class="number">{{ movimiento.valor_hacia_calculado | round(2) }}</td>
-                                <td>{{ movimiento.descripcion }}</td>
+                                <td style="white-space: normal;">{{ movimiento.descripcion }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

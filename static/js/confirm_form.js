@@ -1,126 +1,49 @@
-// Función para validar si todos los campos requeridos del formulario con el ID especificado están completos
-function validarCamposRequeridos(formularioId) {
-    const formulario = document.getElementById(formularioId);
-    const campos = formulario.querySelectorAll('[required]');
-    let camposIncompletos = false;
+// confirm_form.js
 
-    campos.forEach(function (campo) {
-        if (!campo.value.trim()) {
-            camposIncompletos = true;
-            // Agrega una clase de error al campo incompleto si deseas resaltarlos visualmente
-            campo.classList.add('campo-incompleto');
-        } else {
-            // Elimina la clase de error si el campo está completo
-            campo.classList.remove('campo-incompleto');
+// Función para validar y confirmar el formulario
+function validarFormulario(formId) {
+    var form = document.getElementById(formId);
+    var formData = new FormData(form);
+
+    // Verificar si hay campos requeridos vacíos
+    var camposRequeridos = form.querySelectorAll('[required]');
+    for (var i = 0; i < camposRequeridos.length; i++) {
+        var campo = camposRequeridos[i];
+        var valorCampo = formData.get(campo.name);
+        if (!valorCampo || valorCampo.trim() === '') {
+            alert("Por favor, complete todos los campos requeridos.");
+            return false;
         }
+    }
+
+    // Construir mensaje de confirmación con los valores seleccionados
+    var mensajeConfirmacion = "¿Desea añadir los siguientes datos?\n\n";
+    formData.forEach(function(valor, clave) {
+        var etiquetaCampo = form.querySelector('[name="' + clave + '"]').getAttribute('data-label');
+        var campoSeleccionado = form.querySelector('[name="' + clave + '"] option[value="' + valor + '"]');
+        var textoSeleccionado = campoSeleccionado ? campoSeleccionado.textContent : valor;
+        mensajeConfirmacion += etiquetaCampo + ": " + textoSeleccionado + "\n";
     });
 
-    return !camposIncompletos;
+    // Mostrar ventana de confirmación
+    var confirmacion = confirm(mensajeConfirmacion);
+    return confirmacion;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('modal');
-    const closeBtn = document.getElementsByClassName('close')[0];
-    const confirmBtn = document.getElementById('confirmar');
-    const mensajeExito = document.getElementById('mensaje-exito');
-
-    // Función para mostrar el mensaje de éxito
-    function mostrarMensajeExito() {
-        mensajeExito.style.display = 'block';
-        // Ocultar el mensaje después de unos segundos (opcional)
-        setTimeout(function () {
-            mensajeExito.style.display = 'none';
-        }, 3000); 
-    }
-
-    // Escuchar clics en los botones de envío de los formularios
-    const submitButtons = document.querySelectorAll('button[type="submit"]');
-    submitButtons.forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            const formId = this.getAttribute('data-form-id');
-            mostrarConfirmacion(formId);
-        });
-    });
-
-    // Función para mostrar la confirmación
-    function mostrarConfirmacion(formularioId) {
-        modal.style.display = 'block';
-        
-        // Obtener los valores del formulario
-        const formulario = document.getElementById(formularioId);
-        const modalContent = document.getElementById('modal-content');
-        modalContent.innerHTML = '';
-
-        const inversorCheckbox = formulario.querySelector('#inversor_prestamista_deudor_T_F');
-        const rolSelect = formulario.querySelector('#rol_financiero');
-        const idInversorPrestamistaDeudor = formulario.querySelector('#id_inversor_prestamista_deudor');
-        const tipoCta = formulario.querySelector('#tipo_cta');
-        const idContrato = formulario.querySelector('#id_contrato');
-
-        // Mostrar todos los campos para el formulario "cuenta" y aplicar condiciones específicas
-        if (formularioId === 'cuenta') {
-            modalContent.innerHTML += `<strong>Nombre de la Cuenta:</strong> ${document.querySelector('#nombre_cuenta').value}<br>`;
-            modalContent.innerHTML += `<strong>Empresa:</strong> ${document.getElementById('id_empresa').options[document.getElementById('id_empresa').selectedIndex].text}<br>`;
-            modalContent.innerHTML += `<strong>Concepto:</strong> ${document.getElementById('id_concepto').options[document.getElementById('id_concepto').selectedIndex].text}<br>`;
-            modalContent.innerHTML += `<strong>Moneda:</strong> ${document.getElementById('id_moneda').options[document.getElementById('id_moneda').selectedIndex].text}<br>`;
-            const resultadoCheckbox = formulario.querySelector('#resultado');
-            const resultadoValue = resultadoCheckbox.checked ? 'Sí' : 'No';
-            modalContent.innerHTML += `<strong>¿Genera resultado?:</strong> ${resultadoValue}<br>`;
-            // Si el checkbox "inversor_prestamista_deudor_T_F" está marcado, mostrar "Sí", de lo contrario, mostrar "No"
-            const inversorValue = inversorCheckbox.checked ? 'Sí' : 'No';
-            modalContent.innerHTML += `<strong>¿Agente Financiero?:</strong> ${inversorValue}<br>`;
-
-            // Si está marcado como inversor, mostrar los campos "Rol Financiero" e "ID Inversor Prestamista Deudor"
-            if (inversorCheckbox.checked) {
-                modalContent.innerHTML += `<strong>Rol Financiero: </strong> ${rolSelect.value}<br>`;
-                modalContent.innerHTML += `<strong>Nombre:</strong> ${idInversorPrestamistaDeudor.options[idInversorPrestamistaDeudor.selectedIndex].text}<br>`;
-
-                // Si el ID Inversor Prestamista Deudor coincide con "Inversor", mostrar los campos "Tipo de Cuenta" e "ID de Contrato"
-                if (rolSelect.value === 'Inversor') {
-                    modalContent.innerHTML += `<strong>Tipo de Cuenta:</strong> ${tipoCta.value}<br>`;
-                    modalContent.innerHTML += `<strong>Contrato:</strong> ${idContrato.options[idContrato.selectedIndex].text}<br>`;
+// Asignar la función validarFormulario a los botones de envío de los formularios
+document.addEventListener('DOMContentLoaded', function() {
+    var formularios = document.querySelectorAll('form');
+    formularios.forEach(function(form) {
+        var formId = form.getAttribute('id');
+        var submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevenir el envío automático del formulario
+                var formValidado = validarFormulario(formId);
+                if (formValidado) {
+                    form.submit(); // Enviar el formulario si fue validado
                 }
-            }
-        } else {
-            // Mostrar siempre todos los campos para formularios que no son "cuenta"
-            const inputs = formulario.querySelectorAll('input[data-label], select[data-label], textarea[data-label]');
-            inputs.forEach(input => {
-                const label = input.getAttribute('data-label');
-                let value = input.value;
-                
-                // Si el campo es un checkbox, determinar su estado y establecer el valor correspondiente
-                if (input.type === 'checkbox') {
-                    value = input.checked ? 'Sí' : 'No';
-                }
-                
-                // Si el campo es un <select>, obtenemos el texto de la opción seleccionada
-                if (input.tagName === 'SELECT') {
-                    const selectedOption = input.options[input.selectedIndex];
-                    value = selectedOption.text; // Obtenemos el texto de la opción seleccionada
-                }
-                
-                // Mostrar siempre todos los campos
-                modalContent.innerHTML += `<strong>${label}:</strong> ${value}<br>`;
             });
         }
-
-        // Si el usuario confirma, envía el formulario
-        confirmBtn.onclick = function () {
-            formulario.submit();
-            mostrarMensajeExito(); // Llama a la función para mostrar el mensaje de éxito
-        }
-    }
-
-    // Cerrar el modal al hacer clic en el botón de cierre
-    closeBtn.onclick = function () {
-        modal.style.display = 'none';
-    }
-
-    // Cerrar el modal al hacer clic fuera de él
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    }
+    });
 });

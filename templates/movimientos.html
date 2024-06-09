@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modal.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script src="{{ url_for('static', filename='js/account_concept.js') }}"></script>
     <script src="{{ url_for('static', filename='js/value.js') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,11 +32,12 @@
 
             <div class="form-group">
                 <label  for="id_empresa">Empresa:</label>
-                <select class="text-black" id="id_empresa" name="id_empresa" data-label="Empresa"required>
+                <select class="text-black" id="id_empresa" name="id_empresa" data-label="Empresa" required>
+                    <option value="" disabled selected>Seleccione empresa</option>
                     {% for empresa in opciones_empresa %}
                         <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
                     {% endfor %}
-                </select><br>
+                </select>
             </div>
 
             <div class="form-group">
@@ -44,6 +48,7 @@
             <div class="form-group">
                 <label for="id_moneda_desde">Moneda desde:</label>
                 <select class="text-black" id="id_moneda_desde" name="id_moneda_desde" data-label="Moneda"required>
+                    <option value="" disabled selected>Seleccione moneda</option>
                     {% for moneda in opciones_moneda %}
                         <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
                     {% endfor %}
@@ -53,6 +58,7 @@
             <div class="form-group">
                 <label for="id_concepto_desde">Concepto desde:</label>
                 <select class="text-black" id="id_concepto_desde" name="id_concepto_desde" data-label="Concepto Desde"required>
+                    <option value="" disabled selected>Seleccione concepto</option>
                     {% for concepto in opciones_concepto %}
                     <option value="{{ concepto.id_concepto }}" data-cuentas="{{ concepto.cuentas }}">{{ concepto.nombre_concepto }}</option>
                     {% endfor %}
@@ -62,15 +68,17 @@
             <div class="form-group">
                 <label for="id_cuenta_desde">Cuenta desde:</label>
                 <select class="text-black" id="id_cuenta_desde" name="id_cuenta_desde" data-label="Cuenta Desde"required>
+                    <option value="" disabled selected>Seleccione cuenta</option>
                     {% for cuenta in opciones_cuenta %}
                         <option value="{{ cuenta.id_cuenta }}">{{ cuenta.nombre_cuenta }}</option>
                     {% endfor %}
                 </select><br>
             </div>
-
+            
             <div class="form-group">
                 <label for="id_moneda_hacia">Moneda hacia:</label>
                 <select class="text-black" id="id_moneda_hacia" name="id_moneda_hacia" data-label="Moneda Hacia"required>
+                    <option value="" disabled selected>Seleccione moneda</option>
                     {% for moneda in opciones_moneda %}
                         <option value="{{ moneda.id_moneda }}">{{ moneda.descr_moneda }}</option>
                     {% endfor %}
@@ -80,6 +88,7 @@
             <div class="form-group">
                 <label for="id_concepto_hacia">Concepto hacia:</label>
                 <select class="text-black" id="id_concepto_hacia" name="id_concepto_hacia" data-label="Concepto Hacia"required>
+                    <option value="" disabled selected>Seleccione concepto</option>
                     {% for concepto in opciones_concepto %}
                         <option value="{{ concepto.id_concepto }}" data-cuentas="{{ concepto.cuentas }}">{{ concepto.nombre_concepto }}</option>
                     {% endfor %}
@@ -89,8 +98,9 @@
             <div class="form-group">
                 <label for="id_cuenta_hacia">Cuenta hacia:</label>
                 <select class="text-black" id="id_cuenta_hacia" name="id_cuenta_hacia" data-label="Cuenta Hacia"required>
+                    <option value="" disabled selected>Seleccione cuenta</option>
                     {% for cuenta in opciones_cuenta %}
-                        <option value="{{ cuenta.id_cuenta }}">{{ cuenta.nombre_cuenta }}</option>
+                        <option value="{{ cuenta.id_cuenta }}">{{ cuenta.nombre_cuenta }} - {{ cuenta.tipo_cta }}</option>
                     {% endfor %}
                 </select><br>
             </div>
@@ -125,7 +135,8 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/confirm_form.js') }}"></script>
-    
+    <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
+
     <script src="{{ url_for('static', filename='js/value.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/account_concept.js') }}"></script>

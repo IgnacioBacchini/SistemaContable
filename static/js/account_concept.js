@@ -1,5 +1,3 @@
-// account_concept.js
-
 // Variable para almacenar la última solicitud en curso
 let currentRequest = null;
 
@@ -20,16 +18,16 @@ function updateCuentas() {
     }
 
     // Realizar solicitud AJAX para obtener las cuentas desde
-    currentRequest = fetch('/api/get_cuentas', {
+    currentRequest = fetch('/api/get_cuentas_desde', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            'id_concepto': selectedConceptoDesde,
-            'id_cuenta': selectedCuentaDesde,
-            'id_empresa': selectedEmpresa,
-            'id_moneda': selectedMonedaDesde
+            'id_concepto_desde': selectedConceptoDesde,
+            'id_cuenta_desde': selectedCuentaDesde,
+            'id_empresa_desde': selectedEmpresa,
+            'id_moneda_desde': selectedMonedaDesde
         })
     })
     .then(response => response.json())
@@ -38,16 +36,30 @@ function updateCuentas() {
         var cuentaDesdeSelect = document.getElementById('id_cuenta_desde');
         cuentaDesdeSelect.innerHTML = '';
 
+        // Agregar la opción "Seleccione cuenta" nuevamente
+        var optionSeleccione = document.createElement('option');
+        optionSeleccione.value = "";
+        optionSeleccione.textContent = "Seleccione cuenta";
+        cuentaDesdeSelect.appendChild(optionSeleccione);
+
         // Agregar las nuevas opciones
         data.forEach(cuenta => {
             var option = document.createElement('option');
             option.value = cuenta.id_cuenta;
-            option.text = cuenta.nombre_cuenta;
+            // Verificar si tipo_cta es null antes de concatenarlo
+            if (cuenta.tipo_cta !== null) {
+                option.textContent = cuenta.nombre_cuenta + ' - ' + cuenta.tipo_cta;
+            } else {
+                option.textContent = cuenta.nombre_cuenta;
+            }
             cuentaDesdeSelect.add(option);
         });
 
         // Seleccionar la cuenta desde original si aún está disponible
         cuentaDesdeSelect.value = selectedCuentaDesde;
+
+        // Deshabilitar la opción "Seleccione cuenta"
+        optionSeleccione.disabled = true;
     })
     .catch(error => {
         console.error('Error fetching cuentas desde:', error);
@@ -64,6 +76,7 @@ function updateCuentas() {
         },
         body: JSON.stringify({
             'id_concepto_hacia': selectedConceptoHacia,
+            'id_cuenta_hacia': selectedCuentaHacia,
             'id_empresa_hacia': selectedEmpresa,
             'id_moneda_hacia': selectedMonedaHacia
         })
@@ -74,16 +87,30 @@ function updateCuentas() {
         var cuentaHaciaSelect = document.getElementById('id_cuenta_hacia');
         cuentaHaciaSelect.innerHTML = '';
 
+        // Agregar la opción "Seleccione cuenta" nuevamente
+        var optionSeleccione = document.createElement('option');
+        optionSeleccione.value = "";
+        optionSeleccione.textContent = "Seleccione cuenta";
+        cuentaHaciaSelect.appendChild(optionSeleccione);
+
         // Agregar las nuevas opciones
         data.forEach(cuenta => {
             var option = document.createElement('option');
             option.value = cuenta.id_cuenta;
-            option.text = cuenta.nombre_cuenta;
+            // Verificar si tipo_cta es null antes de concatenarlo
+            if (cuenta.tipo_cta !== null) {
+                option.textContent = cuenta.nombre_cuenta + ' - ' + cuenta.tipo_cta;
+            } else {
+                option.textContent = cuenta.nombre_cuenta;
+            }
             cuentaHaciaSelect.add(option);
         });
 
         // Seleccionar la cuenta hacia original si aún está disponible
         cuentaHaciaSelect.value = selectedCuentaHacia;
+
+        // Deshabilitar la opción "Seleccione cuenta"
+        optionSeleccione.disabled = true;
     })
     .catch(error => {
         console.error('Error fetching cuentas hacia:', error);
@@ -92,22 +119,21 @@ function updateCuentas() {
 
 // Llama a la función al cargar la página para cargar las opciones iniciales
 document.addEventListener("DOMContentLoaded", function () {
-    // Resto del código...
 
     // Agregar eventos onchange a los elementos de selección de empresa, moneda, conceptos y cuentas
     var empresaSelect = document.getElementById('id_empresa');
     empresaSelect.addEventListener('change', function () {
-        handleEmpresaChange();
+        updateCuentas();
     });
 
     var monedaDesdeSelect = document.getElementById('id_moneda_desde');
     monedaDesdeSelect.addEventListener('change', function () {
-        handleMonedaChange();
+        updateCuentas();
     });
 
     var monedaHaciaSelect = document.getElementById('id_moneda_hacia');
     monedaHaciaSelect.addEventListener('change', function () {
-        handleMonedaChange();
+        updateCuentas();
     });
 
     var conceptoDesdeSelect = document.getElementById('id_concepto_desde');
@@ -130,6 +156,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCuentas();
     });
 
-    // Llama a la función al cargar la página para cargar las opciones iniciales
+    // Llamar a la función para cargar las opciones iniciales
     updateCuentas();
 });

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <title>Sistema Contable</title>
+
+</head>
+<body>
+    {% extends 'base.html' %}
+    
+    {% block content %}
+        <div class="styled-table-container">
+            <div class="tabla-container" style="width: 100%">
+                <h2 class="text-2xl font-medium text-black text-center">Préstamos</h2>
+                <table id="tabla" class="display dataTable styled-table ">
+                    <thead>
+                        <tr>
+                            <!-- <th>ID</th> -->
+                            <th style="white-space: normal;">Prestamista</th>
+                            <th style="width: 3%;">Empresa</th>
+                            <th style="white-space: normal;">Proyecto</th>
+                            <th style="width: 4%;">Inicio</th>
+                            <th style="width: 4%;">Finalización</th>
+                            <th style="width: 4%;">Plazo</th>
+                            <th style="width: 5%;">Moneda</th>
+                            <th style="white-space: normal;">Monto</th>
+                            <th style="white-space: normal;">Tasa</th>
+                            <th style="white-space: normal;">Cap + Int</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cuenta in datos_prestamistas %}
+                            <tr>
+                                <!-- <td>{{ cuenta.id_cuenta }}</td> -->
+                                <td style="white-space: normal;">{{ cuenta.nombre_inversor_prestamista_deudor }}</td>
+                                <td>{{ cuenta.nombre_empresa }}</td>
+                                <td style="white-space: normal;">{{ cuenta.nombre_proyecto }}</td>
+                                <td>{{ cuenta.fecha_inicio_obra }}</td>
+                                <td>{{ cuenta.fecha_fin_obra }}</td>
+                                <td>{{ cuenta.plazo }} meses</td>
+                                <td>{{ cuenta.descr_moneda }}</td>
+                                <td class="align-right" class="number">{{ cuenta.monto_contrato }}</td>
+                                <td class="align-right" class="number">{{ cuenta.tasa_anual }}</td>
+                                <td class="align-right" class="number">{{ cuenta.total | round(2)}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tabla-container" style="width: 100%">
+                <h2 class="text-2xl font-medium text-black text-center">Movimientos Prestamistas</h2>
+                <table id="tabla-movimientos" class="display dataTable styled-table" style="width: 100%; table-layout: fixed;">
+                    <thead>
+                        <tr style="font-size: 13px;">
+                            <!-- <th style="width: 1%;">ID</th> -->
+                            <th style="width: 4%;">Fecha</th>
+                            <th style="width: 5%;">Empresa</th>
+                            <th style="white-space: normal;">Concepto Desde</th>
+                            <th style="white-space: normal;">Cuenta Desde</th>
+                            <!-- <th style="white-space: normal;">Moneda Hacia</th> -->
+                            <th style="white-space: normal;">Concepto Hacia</th>
+                            <th style="white-space: normal;">Cuenta Hacia</th>
+                            <th style="width: 4%;" style="white-space: normal;">Moneda</th>
+                            <th style="width: 4%;" style="white-space: normal;">Valor</th>
+                            <!-- <th style="width: 4%;">Cambio</th> -->
+                            <!-- <th style="white-space: normal;">Valor Hacia</th> -->
+                            <th style="white-space: normal; word-break: keep-all;">Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for movimiento in movimientos_data %}
+                            <tr style="font-size: 13px;">
+                                <!-- <td>{{ movimiento.id_movimiento }}</td> -->
+                                <td>{{ movimiento.fecha }}</td>
+                                <td>{{ movimiento.empresa.nombre_empresa }}</td>
+                                <td style="white-space: normal;">{{ movimiento.concepto_desde.nombre_concepto }}</td>
+                                <td style="white-space: normal;">{{ movimiento.cuenta_desde.nombre_cuenta }}</td>
+                                <!-- <td >{{ movimiento.moneda_hacia.descr_moneda }}</td> -->
+                                <td style="white-space: normal;">{{ movimiento.concepto_hacia.nombre_concepto }}</td>
+                                <td style="white-space: normal;">{{ movimiento.cuenta_hacia.nombre_cuenta }}</td>
+                                <td>{{ movimiento.moneda_desde.descr_moneda }}</td>
+                                <td class="align-right" class="number">{{ movimiento.valor_desde | round(2) }}</td>
+                                <!-- <td class="align-right" class="number">{{ movimiento.tipo_de_cambio | round(2) }}</td> -->
+                                <!-- <td class="align-right" class="number">{{ movimiento.valor_hacia_calculado | round(2) }}</td> -->
+                                <td style="white-space: normal;">{{ movimiento.descripcion }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

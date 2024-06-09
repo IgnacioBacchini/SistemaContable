@@ -4,7 +4,6 @@ function toggleInversorField() {
     var inversorField = document.getElementById('inversorField');
     var tipoCtaField = document.getElementById('tipoCtaField');
     var idContratoField = document.getElementById('contratoField');
-    var rolValue = document.getElementById('rol_financiero').value;
 
     if (inversorCheckbox.checked) {
         rolField.style.display = 'block';

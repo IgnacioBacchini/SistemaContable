@@ -13,9 +13,17 @@
     {% extends 'base.html' %}
     
     {% block content %}
-    <form action="/api/rent" method="post">
-        <button type="submit" value="Calcular Intereses" class="mt-4 w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-3 py-2.5 text-center">Calcular Intereses</button>
+    <form id="form" action="/api/rent" method="post">
+        <button type="button" onclick="confirmSubmit()" class="mt-4 w-full text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-3 py-2.5 text-center">Calcular Intereses</button>
     </form>
+
+    <script>
+        function confirmSubmit() {
+            if (confirm("¿Estás seguro de que deseas calcular los intereses?")) {
+                document.getElementById("form").submit();
+            }
+        }
+    </script>
     {% endblock %}
     
 </body>

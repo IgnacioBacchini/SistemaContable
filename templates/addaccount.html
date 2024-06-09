@@ -16,19 +16,19 @@
 <body>
     {% extends 'base.html' %}
     {% block content %}
-    <h2 class="text-2xl font-medium text-black text-center">Cuentas</h2>
+    <h2 class="text-2xl font-medium text-black text-center">Listado de Cuentas</h2>
         <div class="styled-table-container">
             <table id="tabla" class="display dataTable styled-table">
                 <thead>
                     <tr>
-                        <th>Empresa</th>
+                        <th style="width: 5%;">Empresa</th>
                         <th>Concepto</th>
                         <th>Moneda</th>
-                        <th>Nombre Cuenta</th>
+                        <th style="white-space: normal;">Nombre Cuenta</th>
                         <th>Resultado</th>
-                        <th>Agente Financiero</th>
-                        <th>Nombre</th>
-                        <th>Tipo de Cuenta</th>
+                        <th style="white-space: normal;">Agente Financiero</th>
+                        <th >Nombre</th>
+                        <th style="white-space: normal;">Tipo Cuenta</th>
                         <th>Contrato</th>
                     </tr>
                 </thead>
@@ -36,12 +36,12 @@
                     {% for cuenta in opciones_cuenta %}
                         <tr>
                             <td>{{ cuenta.empresa.nombre_empresa }}</td>
-                            <td>{{ cuenta.concepto.nombre_concepto }}</td>
+                            <td style="white-space: normal;">{{ cuenta.concepto.nombre_concepto }}</td>
                             <td>{{ cuenta.moneda.descr_moneda }}</td>
-                            <td>{{ cuenta.nombre_cuenta }}</td>
+                            <td style="white-space: normal;">{{ cuenta.nombre_cuenta }}</td>
                             <td>{{ cuenta.resultado }}</td>
                             <td>{{ cuenta.inversor_prestamista_deudor_T_F }}</td>
-                            <td>
+                            <td style="white-space: normal;">
                                 {% if cuenta.inversor_prestamista_deudor_T_F %}
                                     {{ cuenta.inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}
                                 {% endif %}
@@ -51,7 +51,7 @@
                                     {{ cuenta.tipo_cta }}
                                 {% endif %}
                             </td>
-                            <td>
+                            <td style="white-space: normal;">
                                 {% if cuenta.inversor_prestamista_deudor_T_F %}
                                     {{ cuenta.contrato.nombre_contrato }}
                                 {% endif %}
@@ -79,6 +79,7 @@
                 <label for="nombre_empresa">Empresa:</label>
                 <select id="id_empresa" name="id_empresa" required
                     data-label="Empresa">
+                    <option value="" disabled selected>Seleccione empresa</option>
                     {% for empresa in opciones_empresa %}
                         <option value="{{ empresa.id_empresa }}" data-label="Empresa">{{ empresa.nombre_empresa }}</option>
                     {% endfor %}
@@ -89,6 +90,7 @@
                 <label for="nombre_conepto">Concepto:</label>
                 <select id="id_concepto" name="id_concepto" required
                     data-label="Concepto">
+                    <option value="" disabled selected>Seleccione concepto</option>
                     {% for concepto in opciones_concepto %}
                         <option value="{{ concepto.id_concepto }}" data-label="Concepto">{{ concepto.nombre_concepto }}</option>
                     {% endfor %}
@@ -99,6 +101,7 @@
                 <label for="descr_moneda">Moneda:</label>
                 <select id="id_moneda" name="id_moneda" required
                     data-label="Moneda">
+                    <option value="" disabled selected>Seleccione moneda</option>
                     {% for moneda in opciones_moneda %}
                         <option value="{{ moneda.id_moneda }}" data-label="Moneda">{{ moneda.descr_moneda }}</option>
                     {% endfor %}
@@ -117,20 +120,21 @@
                     data-label="Agente Financiero">
             </div>  
 
-            <div class="form-group" id="rolField" >
-                <label for="rol_financiero">Rol:</label>
-                <select id="rol_financiero" name="rol_financiero" required
-                    data-label="Rol Financiero">
-                    <option value="Deudor" data-label="Rol Financiero">Deudor</option>
-                    <option value="Inversor" data-label="Rol Financiero">Inversor</option>
-                    <option value="Prestamista" data-label="Rol Financiero">Prestamista</option>
+            <div class="form-group" id="rolField">
+                <label for="inversor_o_prestamista_o_deudor" >Rol:</label>
+                <select id="inversor_o_prestamista_o_deudor" name="inversor_o_prestamista_o_deudor" data-label="Rol" onchange="toggleTasaField()">
+                    <option value="" disabled selected>Seleccione rol</option>
+                    <option value="Deudor">Deudor</option>
+                    <option value="Prestamista">Prestamista</option>
+                    <option value="Inversor">Inversor</option>
                 </select>
             </div>
 
             <div class="form-group" id="inversorField" >
                 <label for="id_inversor_prestamista_deudor">Nombre:</label>
-                <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" required
+                <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" 
                     data-label="Nombre del Inversor">
+                    <option value="" disabled selected>Seleccione agente</option>
                     {% for inversor_prestamista_deudor in opciones_inversor_prestamista_deudor %}
                         <option value="{{ inversor_prestamista_deudor.id_inversor_prestamista_deudor }}" data-label="Nombre del Inversor">{{ inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</option>
                     {% endfor %}
@@ -139,8 +143,9 @@
 
             <div class="form-group" id="tipoCtaField" >
                 <label for="tipo_cta">Tipo de cuenta:</label>
-                <select id="tipo_cta" name="tipo_cta" required
+                <select id="tipo_cta" name="tipo_cta" 
                     data-label="Tipo de Cuenta">
+                    <option value="" disabled selected>Seleccione tipo de cuenta</option>
                     <option value="A" data-label="Tipo de Cuenta">A</option>
                     <option value="B" data-label="Tipo de Cuenta">B</option>
                 </select>
@@ -148,8 +153,9 @@
             
             <div class="form-group" id="contratoField" >
                 <label for="id_contrato">Contrato:</label>
-                <select id="id_contrato" name="id_contrato" required
+                <select id="id_contrato" name="id_contrato" 
                     data-label="Contrato">
+                    <option value="" disabled selected>Seleccione contrato</option>
                     {% for contrato in opciones_contrato %}
                         <option value="{{ contrato.id_contrato }}" data-label="Contrato">{{ contrato.nombre_contrato }}</option>
                     {% endfor %}
@@ -169,9 +175,11 @@
             </div>
         </div>
         <script src="{{ url_for('static', filename='js/confirm_form.js') }}"></script>
-
+        <script src="{{ url_for('static', filename='js/contract.js') }}"></script>
         <script src="{{ url_for('static', filename='js/inversor_T_F.js') }}"></script>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/investor_role.js') }}"></script>
+        
     {% endblock %}
     
     

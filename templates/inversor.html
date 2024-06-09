@@ -20,23 +20,23 @@
                 <table id="tabla-peso" class="display dataTable styled-table ">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th style="width: 1%;">ID</th>
                             <th>Concepto</th>
                             <th>Cuenta</th>
                             <th>Empresa</th>
                             <th>Moneda</th>
-                            <th class="align-right">Saldo</th>
+                            <th class="align-right">Saldo disponible</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cuenta in datos_peso %}
                             <tr>
                                 <td>{{ cuenta.id_cuenta }}</td>
-                                <td>{{ cuenta.nombre_concepto }}</td>
-                                <td>{{ cuenta.nombre_cuenta }}</td>
+                                <td style="white-space: normal;">{{ cuenta.nombre_concepto }}</td>
+                                <td style="white-space: normal;">{{ cuenta.nombre_cuenta }}</td>
                                 <td>{{ cuenta.nombre_empresa }}</td>
                                 <td>{{ cuenta.descr_moneda }}</td>
-                                <td class="align-right">{{ cuenta.diferencia }}</td>
+                                <td class="align-right">{{ cuenta.saldo | round(2)}}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -47,23 +47,23 @@
                 <table id="tabla-dolar" class="display dataTable styled-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th style="width: 1%;">ID</th>
                             <th>Concepto</th>
                             <th>Cuenta</th>
                             <th>Empresa</th>
                             <th>Moneda</th>
-                            <th class="align-right">Saldo</th>
+                            <th class="align-right">Saldo disponible</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cuenta in datos_dolar %}
                             <tr>
                                 <td>{{ cuenta.id_cuenta }}</td>
-                                <td>{{ cuenta.nombre_concepto }}</td>
-                                <td>{{ cuenta.nombre_cuenta }}</td>
+                                <td style="white-space: normal;">{{ cuenta.nombre_concepto }}</td>
+                                <td style="white-space: normal;">{{ cuenta.nombre_cuenta }}</td>
                                 <td>{{ cuenta.nombre_empresa }}</td>
                                 <td>{{ cuenta.descr_moneda }}</td>
-                                <td class="align-right">{{ cuenta.diferencia }}</td>
+                                <td class="align-right">{{ cuenta.saldo | round(2)}}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -74,23 +74,23 @@
                 <table id="tabla-euro" class="display dataTable styled-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th style="width: 1%;">ID</th>
                             <th>Concepto</th>
                             <th>Cuenta</th>
                             <th>Empresa</th>
                             <th>Moneda</th>
-                            <th class="align-right">Saldo</th>
+                            <th class="align-right">Saldo disponible</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cuenta in datos_euro %}
                             <tr>
                                 <td>{{ cuenta.id_cuenta }}</td>
-                                <td>{{ cuenta.nombre_concepto }}</td>
-                                <td>{{ cuenta.nombre_cuenta }}</td>
+                                <td style="white-space: normal;">{{ cuenta.nombre_concepto }}</td>
+                                <td style="white-space: normal;">{{ cuenta.nombre_cuenta }}</td>
                                 <td>{{ cuenta.nombre_empresa }}</td>
                                 <td>{{ cuenta.descr_moneda }}</td>
-                                <td class="align-right">{{ cuenta.diferencia }}</td>
+                                <td class="align-right">{{ cuenta.saldo | round(2) }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

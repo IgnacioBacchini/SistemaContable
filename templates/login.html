@@ -14,18 +14,12 @@
         {% endif %}
         <form method="post" action="{{ url_for('login') }}">
             <div class="username">
-                <input type="text" id="nombre_usuario"  name="nombre_usuario" required>
-                <label>Nombre de usuario</label>
+                <input type="text" id="nombre_usuario"  name="nombre_usuario" placeholder="Nombre de usuario" required>
             </div>
             <div class="username">
-                <input type="password" id="contrasenia" name="contrasenia" required>
-                <label>Contraseña</label>
+                <input type="password" id="contrasenia" name="contrasenia" placeholder="Contraseña" required>
             </div>
-            <div class="recordar">¿Olvido su contraseña?</div>
             <button type="submit">Iniciar sesión</button>
-            <div class="registrarse">
-                Quiero <a href="#">registrarme</a>
-            </div>
         </form>
     </div>
 </body>

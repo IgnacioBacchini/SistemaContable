@@ -5,6 +5,16 @@ from flask import Flask
 
 db = SQLAlchemy()
 
+class UltimaPresion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fecha = db.Column(db.Date)
+    
+    def serialize(self):
+        return {
+            'id': self.id,
+            'fecha': self.fecha
+        }
+
 class Empresa(db.Model):
     id_empresa = db.Column(db.Integer, unique=True, primary_key=True)
     nombre_empresa = db.Column(db.Text, unique=True)
@@ -65,11 +75,13 @@ class Proyecto(db.Model):
     id_proyecto = db.Column(db.Integer, unique=True, primary_key=True)
     nombre_proyecto = db.Column(db.Text)
     fecha_fin_obra = db.Column(db.Date)
+    fecha_inicio_obra = db.Column(db.Date)
     
     def serialize(self):
         return {
             'id_proyecto': self.id_proyecto,
             'nombre_proyecto': self.nombre_proyecto,
+            'fecha_inicio_obra':self.fecha_inicio_obra,
             'fecha_fin_obra': self.fecha_fin_obra,
         }
 

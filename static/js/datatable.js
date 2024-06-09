@@ -1,11 +1,9 @@
 $(document).ready(function () {
-
     $('.dataTable').DataTable({
         dom: 'Qlfrtip', // Agrega la funcionalidad de SearchBuilder y otros elementos
-        searchBuilder: {
-            columns: [] // Puedes configurar aquí las columnas específicas si lo deseas
-        },
         "language": {
+            "decimal": ",",//separador decimales
+            "thousands": ".",//Separador miles
             "processing": "Procesando...",
             "lengthMenu": "Filas a mostrar: _MENU_ ",
             "zeroRecords": "No se encontraron resultados",
@@ -57,71 +55,6 @@ $(document).ready(function () {
                 "fillHorizontal": "Rellenar celdas horizontalmente",
                 "fillVertical": "Rellenar celdas verticalmente"
             },
-            "decimal": ",",
-            "searchBuilder": {
-                "add": "Añadir condición",
-                "button": {
-                    "0": "Constructor de búsqueda",
-                    "_": "Constructor de búsqueda (%d)"
-                },
-                "clearAll": "Borrar todo",
-                "condition": "Condición",
-                "conditions": {
-                    "date": {
-                        "before": "Antes",
-                        "between": "Entre",
-                        "empty": "Vacío",
-                        "equals": "Igual a",
-                        "notBetween": "No entre",
-                        "not": "Diferente de",
-                        "after": "Después",
-                        "notEmpty": "No Vacío"
-                    },
-                    "number": {
-                        "between": "Entre",
-                        "equals": "Igual a",
-                        "gt": "Mayor a",
-                        "gte": "Mayor o igual a",
-                        "lt": "Menor que",
-                        "lte": "Menor o igual que",
-                        "notBetween": "No entre",
-                        "notEmpty": "No vacío",
-                        "not": "Diferente de",
-                        "empty": "Vacío"
-                    },
-                    "string": {
-                        "contains": "Contiene",
-                        "empty": "Vacío",
-                        "endsWith": "Termina en",
-                        "equals": "Igual a",
-                        "startsWith": "Empieza con",
-                        "not": "Diferente de",
-                        "notContains": "No Contiene",
-                        "notStartsWith": "No empieza con",
-                        "notEndsWith": "No termina con",
-                        "notEmpty": "No Vacío"
-                    },
-                    "array": {
-                        "not": "Diferente de",
-                        "equals": "Igual",
-                        "empty": "Vacío",
-                        "contains": "Contiene",
-                        "notEmpty": "No Vacío",
-                        "without": "Sin"
-                    }
-                },
-                "data": "Data",
-                "deleteTitle": "Eliminar regla de filtrado",
-                "leftTitle": "Criterios anulados",
-                "logicAnd": "Y",
-                "logicOr": "O",
-                "rightTitle": "Criterios de sangría",
-                "title": {
-                    "0": "Constructor de búsqueda",
-                    "_": "Constructor de búsqueda (%d)"
-                },
-                "value": "Valor"
-            },
             "searchPanes": {
                 "clearMessage": "Borrar todo",
                 "collapse": {
@@ -150,7 +83,6 @@ $(document).ready(function () {
                     "_": "%d filas seleccionadas"
                 }
             },
-            "thousands": ".",
             "datetime": {
                 "previous": "Anterior",
                 "hours": "Horas",
@@ -247,9 +179,8 @@ $(document).ready(function () {
                 "removeError": "Error al eliminar el Estado",
                 "renameLabel": "Nuevo nombre para %s:"
             },
-            "infoThousands": "."
         },
         "order": [[0, "asc"]],
         "lengthMenu": [5, 10, 25, 50],
-    });
+    });    
 });

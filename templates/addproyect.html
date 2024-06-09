@@ -21,6 +21,7 @@
                 <thead>
                     <tr>
                         <th>Nombre</th>
+                        <th>Fecha Inicio de Obra</th>
                         <th>Fecha Fin de Obra</th>
                     </tr>
                 </thead>
@@ -28,6 +29,7 @@
                     {% for proyecto in opciones_proyecto  %}
                         <tr>
                             <td>{{ proyecto.nombre_proyecto }}</td>
+                            <td>{{ proyecto.fecha_inicio_obra }}</td>
                             <td>{{ proyecto.fecha_fin_obra }}</td>
                         </tr>
                     {% endfor %}
@@ -45,7 +47,11 @@
                 <input data-label="Nombre" type="text" id="nombre_proyecto" name="nombre_proyecto" required>
             </div>
             <div class="form-group">
-                <label for="fecha">Fecha:</label>
+                <label for="fecha">Fecha de Inicio:</label>
+                <input data-label="Fecha de inicio" type="date" id="fecha_inicio_obra" name="fecha_inicio_obra" required><br>
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha de Finalización:</label>
                 <input data-label="Fecha de finalización" type="date" id="fecha_fin_obra" name="fecha_fin_obra" required><br>
             </div>
             <button type="submit" data-form-id="proyecto" value="Agregar Proyecto" class="w-full text-white text-white bg-gradient-to-r from-[#5D6D7E] via-[#424949] to-[#5D6D7E] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Agregar proyecto</button>

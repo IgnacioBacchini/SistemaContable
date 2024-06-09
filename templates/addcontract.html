@@ -20,31 +20,31 @@
             <table id="tabla" class="display dataTable styled-table">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Inversor</th>
-                        <th>Empresa</th>
-                        <th>Proyecto</th>
-                        <th>Moneda</th>
-                        <th>Tipo de Inversor</th>
-                        <th>Tasa Anual Capital</th>
-                        <th>Tasa Anual Renta Espera</th>
-                        <th>CAC</th>
-                        <th>Monto</th>
+                        <th style="white-space: normal;">Nombre</th>
+                        <!-- <th>Agente</th> -->
+                        <th style="width: 5%;">Empresa</th>
+                        <th style="white-space: normal;">Proyecto</th>
+                        <th style="white-space: normal;">Moneda</th>
+                        <th style="white-space: normal;">Rol</th>
+                        <th style="white-space: normal;">Tasa Cap</th>
+                        <th style="white-space: normal;">Tasa RE</th>
+                        <!-- <th>CAC</th> -->
+                        <th style="white-space: normal;">Monto</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for contrato in opciones_contrato %}
                         <tr>
-                            <td>{{ contrato.nombre_contrato }}</td>
-                            <td>{{ contrato.inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</td>
+                            <td style="white-space: normal;">{{ contrato.nombre_contrato }}</td>
+                            <!-- <td>{{ contrato.inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</td> -->
                             <td>{{ contrato.empresa.nombre_empresa }}</td>
-                            <td>{{ contrato.proyecto.nombre_proyecto }}</td>
+                            <td style="white-space: normal;">{{ contrato.proyecto.nombre_proyecto }} - {{ contrato.proyecto.fecha_fin_obra_formateada }}</td>
                             <td>{{ contrato.moneda.descr_moneda }}</td>
                             <td>{{ contrato.inversor_prestamista_deudor.inversor_o_prestamista_o_deudor }}</td>
                             <td>{{ contrato.tasa_anual }}</td>
                             <td>{{ contrato.tasa_anual_RE }}</td>
-                            <td>{{ contrato.aplica_CAC_T_F }}</td>
-                            <td>{{ contrato.monto_contrato }}</td>
+                            <!-- <td>{{ contrato.aplica_CAC_T_F }}</td> -->
+                            <td class="align-right" class="number">{{ contrato.monto_contrato }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -65,28 +65,21 @@
             </div>
 
             <div class="form-group">
-                <label for="nombre_inversor_prestamista_deudor"  >Agente:</label>
-                <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" data-label="Agente Financiero" required>
-                    {% for inversor_prestamista_deudor in opciones_inversor_prestamista_deudor %}
-                        <option value="{{ inversor_prestamista_deudor.id_inversor_prestamista_deudor }}" >{{ inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</option>
-                    {% endfor %}
-                </select>
-            </div>  
-
-            <div class="form-group">
                 <label for="nombre_empresa">Empresa:</label>
                 <select id="id_empresa" name="id_empresa" data-label="Empresa" required>
+                    <option value="" disabled selected>Seleccione empresa</option>
                     {% for empresa in opciones_empresa %}
                         <option value="{{ empresa.id_empresa }}" >{{ empresa.nombre_empresa }}</option>
                     {% endfor %}
                 </select>
-            </div>  
+            </div>
 
             <div class="form-group">
                 <label for="nombre_proyecto">Proyecto:</label>
                 <select id="id_proyecto" name="id_proyecto" data-label="Proyecto" required>
+                    <option value="" disabled selected>Seleccione proyecto</option>
                     {% for proyecto in opciones_proyecto %}
-                        <option value="{{ proyecto.id_proyecto }}" >{{ proyecto.nombre_proyecto }}</option>
+                        <option value="{{ proyecto.id_proyecto }}">{{ proyecto.nombre_proyecto }} - {{ proyecto.fecha_fin_obra_formateada }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -94,15 +87,17 @@
             <div class="form-group">
                 <label for="descr_moneda">Moneda:</label>
                 <select id="id_moneda" name="id_moneda" data-label="Moneda" required>
+                    <option value="" disabled selected>Seleccione moneda</option>
                     {% for moneda in opciones_moneda %}
                         <option value="{{ moneda.id_moneda }}" >{{ moneda.descr_moneda }}</option>
                     {% endfor %}
                 </select>
-            </div>  
+            </div> 
 
             <div class="form-group">
                 <label for="inversor_o_prestamista_o_deudor" >Rol:</label>
-                <select id="inversor_o_prestamista_o_deudor" name="inversor_o_prestamista_o_deudor" data-label="Rol" onchange="toggleTasaField()">
+                <select id="inversor_o_prestamista_o_deudor" name="inversor_o_prestamista_o_deudor" data-label="Rol" onchange="toggleTasaField()" required>
+                    <option value="" disabled selected>Seleccione rol</option>
                     <option value="Deudor">Deudor</option>
                     <option value="Prestamista">Prestamista</option>
                     <option value="Inversor">Inversor</option>
@@ -110,12 +105,22 @@
             </div>
 
             <div class="form-group">
+                <label for="id_inversor_prestamista_deudor"  >Nombre:</label>
+                <select id="id_inversor_prestamista_deudor" name="id_inversor_prestamista_deudor" data-label="Agente Financiero" required>
+                    <option value="" disabled selected>Seleccione agente</option>
+                    {% for inversor_prestamista_deudor in opciones_inversor_prestamista_deudor %}
+                        <option value="{{ inversor_prestamista_deudor.id_inversor_prestamista_deudor }}" >{{ inversor_prestamista_deudor.nombre_inversor_prestamista_deudor }}</option>
+                    {% endfor %}
+                </select>
+            </div> 
+
+            <div class="form-group">
                 <label for="tasa_anual">Tasa Anual Capital:</label>
                 <input type="number" data-label="Tasa Anual Capital" id="tasa_anual" name="tasa_anual" step="0.01" min="0" max="1.00" required><br>
             </div>
 
             <div class="form-group">
-                <label for="tasa_anual_RE">Tasa Anual Renta Espera:</label>
+                <label for="tasa_anual_RE">Tasa Anual Renta Acumulada:</label>
                 <input type="number" data-label="Tasa Anual Renta Espera" id="tasa_anual_RE" name="tasa_anual_RE" step="0.01" min="0" max="1.00" required><br>
             </div>
 
@@ -144,6 +149,7 @@
         </div>
         <script src="{{ url_for('static', filename='js/confirm_form.js') }}"></script>
         <script src="{{ url_for('static', filename='js/datatable.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/investor_role.js') }}"></script>
     {% endblock %}
     
     
